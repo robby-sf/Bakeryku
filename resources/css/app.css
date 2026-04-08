@@ -8,4 +8,12 @@
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-heading: 'Playfair Display', serif;
+    --font-body: 'Poppins', sans-serif;
+    
+    --color-brand-dark: #4A2B1D;
+    --color-brand-primary: #8C5230;
+    --color-brand-light: #FAF6F0;
+    --color-brand-card: #FFFBF5;
 }
+
