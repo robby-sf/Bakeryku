@@ -115,9 +115,43 @@
                         </div>
                     </div>
 
-                    <button class="bg-white border-2 border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white font-semibold py-2 md:py-3 px-6 rounded-full transition duration-300 w-full md:w-auto text-sm md:text-base">
+                    <button id="btn-tulis-ulasan" class="bg-white border-2 border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white font-semibold py-2 md:py-3 px-6 rounded-full transition duration-300 w-full md:w-auto text-sm md:text-base cursor-pointer flex justify-center items-center">
                         <i class="fa-solid fa-pen mr-2"></i> Tulis Ulasan
                     </button>
+                </div>
+
+                <div id="form-ulasan-container" class="hidden bg-[#FFFDFB] border border-[#F0EBE1] rounded-2xl p-6 md:p-8 shadow-sm mb-8 transform transition-all">
+                    <h3 class="font-bold text-brand-dark mb-1 text-lg">Bagaimana penilaian Anda?</h3>
+                    <p class="text-sm text-gray-500 mb-6">Ulasan Anda membantu kami meningkatkan kualitas produk.</p>
+                    
+                    <form action="#" method="POST">
+                        @csrf
+                        
+                        <div class="mb-5">
+                            <label class="block text-sm font-semibold text-brand-dark mb-2">Pilih Rating</label>
+                            <div class="flex text-gray-300 text-3xl cursor-pointer gap-2" id="star-rating">
+                                <i class="fa-solid fa-star hover:scale-110 transition-transform" data-value="1"></i>
+                                <i class="fa-solid fa-star hover:scale-110 transition-transform" data-value="2"></i>
+                                <i class="fa-solid fa-star hover:scale-110 transition-transform" data-value="3"></i>
+                                <i class="fa-solid fa-star hover:scale-110 transition-transform" data-value="4"></i>
+                                <i class="fa-solid fa-star hover:scale-110 transition-transform" data-value="5"></i>
+                            </div>
+                            <input type="hidden" name="rating" id="rating-input" required>
+                            <p id="rating-error" class="text-red-500 text-xs mt-1 hidden">Silakan pilih rating bintang terlebih dahulu.</p>
+                        </div>
+
+                        <div class="mb-6">
+                            <label for="komentar" class="block text-sm font-semibold text-brand-dark mb-2">Tulis Komentar</label>
+                            <textarea id="komentar" name="komentar" rows="4" required
+                                class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#C28C62] focus:ring-1 focus:ring-[#C28C62] outline-none transition bg-white text-sm" 
+                                placeholder="Ceritakan pengalaman Anda (rasa, tekstur, pelayanan, dll)..."></textarea>
+                        </div>
+
+                        <div class="flex justify-end gap-3">
+                            <button type="button" id="btn-batal-ulasan" class="px-6 py-2.5 rounded-xl text-sm font-bold text-gray-500 hover:bg-gray-100 transition-colors">Batal</button>
+                            <button type="submit" class="bg-[#8C5230] hover:bg-[#683b21] text-white px-8 py-2.5 rounded-xl text-sm font-bold shadow-sm transition-colors">Kirim Ulasan</button>
+                        </div>
+                    </form>
                 </div>
 
                 <div class="flex items-center gap-2 overflow-x-auto pb-4 mb-6 scrollbar-hide snap-x">
@@ -188,4 +222,46 @@
 
         </div>
     </div>
+
+    {{-- SCRIPT UNTUK FORM TOGGLE & STAR RATING --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const btnTulis = document.getElementById('btn-tulis-ulasan');
+            const btnBatal = document.getElementById('btn-batal-ulasan');
+            const formContainer = document.getElementById('form-ulasan-container');
+
+            // Logika untuk Muncul/Sembunyi Form
+            btnTulis.addEventListener('click', function () {
+                formContainer.classList.remove('hidden');
+                btnTulis.classList.add('hidden'); // Sembunyikan tombol 'Tulis Ulasan'
+            });
+
+            btnBatal.addEventListener('click', function () {
+                formContainer.classList.add('hidden');
+                btnTulis.classList.remove('hidden'); // Tampilkan lagi tombolnya
+            });
+
+            // Logika untuk Rating Bintang Interaktif
+            const stars = document.querySelectorAll('#star-rating i');
+            const ratingInput = document.getElementById('rating-input');
+
+            stars.forEach(star => {
+                star.addEventListener('click', function () {
+                    const value = this.getAttribute('data-value');
+                    ratingInput.value = value; // Masukkan angka ke input hidden
+                    
+                    // Update visual warna bintang
+                    stars.forEach(s => {
+                        if (s.getAttribute('data-value') <= value) {
+                            s.classList.remove('text-gray-300');
+                            s.classList.add('text-yellow-400');
+                        } else {
+                            s.classList.remove('text-yellow-400');
+                            s.classList.add('text-gray-300');
+                        }
+                    });
+                });
+            });
+        });
+    </script>
 @endsection
