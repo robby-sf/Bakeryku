@@ -17,12 +17,15 @@ Route::get('/admin/products', function () {return view('Admin.Product.product');
 Route::get('/admin/settings', function () {return view('Admin.Settings.settings'); })->name('admin.settings');
 Route::get('/admin/reviews', function () {return view('Admin.Reviews.reviews'); })->name('admin.reviews');
 Route::get('/admin/notifications', function () {return view('Admin.Notifications.notifications'); })->name('admin.notifications');
+Route::get('/admin/profile', function () {return view('Admin.Profiles.profiles');})->name('admin.profile');
+Route::get('/admin/tambah-menu', function () {return view('Admin.Product.tambah_menu');})->name('admin.tambah_menu');
 Route::get('/admin/activities', function () {return view('Admin.Activities.activities'); })->name('admin.activities');
+Route::get('/admin/promos', function () {return view('Admin.Promo.promos'); })->name('admin.promos');
+Route::get('/admin/promos/add', function () {return view('Admin.Promo.add_promos'); })->name('admin.promos.add');
+
 Route::prefix('admin/auth')->name('admin.')->group(function () {
     Route::get('/login', function () { return view('Admin.Auth.login'); })->name('login');
     Route::get('/register', function () { return view('Admin.Auth.register');})->name('register'); 
-    Route::get('/profile', function () {return view('Admin.Profiles.profiles');})->name('profile');
-    Route::get('/tambah-menu', function () {return view('Admin.Product.tambah_menu');})->name('tambah_menu');
 });
 
 Route::get('/menu/view', function () {return view('Menu.menu_view');})->name('menu_view');

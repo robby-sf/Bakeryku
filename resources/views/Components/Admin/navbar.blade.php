@@ -42,7 +42,7 @@
                                 </a>
                             </div>
                             
-                            <a href="{{ route('admin.notifications') }}" class="block text-center px-4 py-3 bg-[#EAE2D6]/30 text-sm text-[#855333] hover:bg-[#EAE2D6] font-bold transition border-t border-[#EAE2D6]">
+                            <a href="{{ route('admin.notifications') ?? '#' }}" class="block text-center px-4 py-3 bg-[#EAE2D6]/30 text-sm text-[#855333] hover:bg-[#EAE2D6] font-bold transition border-t border-[#EAE2D6]">
                                 Lihat Semua Notifikasi
                             </a>
                         </div>
@@ -67,16 +67,16 @@
                             </div>
                             
                             <div class="py-2">
-                                <a href="{{ route('admin.profile') }}" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-[#FAF8F5] hover:text-[#855333] transition font-medium">
+                                <a href="{{ route('admin.profile') ?? '#' }}" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-[#FAF8F5] hover:text-[#855333] transition font-medium">
                                     <i class="fa-regular fa-circle-user w-4 text-center"></i> Profil Saya
                                 </a>
-                                <a href="{{ route('admin.settings') }}" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-[#FAF8F5] hover:text-[#855333] transition font-medium">
+                                <a href="{{ route('admin.settings') ?? '#' }}" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-[#FAF8F5] hover:text-[#855333] transition font-medium">
                                     <i class="fa-solid fa-gear w-4 text-center"></i> Pengaturan Akun
                                 </a>
                             </div>
                             
                             <div class="border-t border-[#EAE2D6] py-2">
-                                <form method="POST" action="{{ route('logout') }}">
+                                <form method="POST" action="{{ route('logout') ?? '#' }}">
                                     @csrf
                                     <button type="submit" class="flex w-full items-center gap-3 px-4 py-2 text-sm text-[#DE5B6D] hover:bg-red-50 hover:text-red-700 transition font-bold text-left">
                                         <i class="fa-solid fa-arrow-right-from-bracket w-4 text-center"></i> Logout
@@ -96,26 +96,32 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <nav class="bg-[#EAE2D6] rounded-xl flex items-center justify-between p-1.5 overflow-x-auto hide-scroll-bar">
                 
-                <a href="{{ route('admin.dashboard') }}" 
-                   class="flex-1 min-w-[120px] text-center py-2.5 rounded-lg transition-colors text-sm 
+                <a href="{{ route('admin.dashboard') ?? '#' }}" 
+                   class="flex-1 min-w-[100px] text-center py-2.5 rounded-lg transition-colors text-sm 
                    {{ request()->routeIs('admin.dashboard') ? 'bg-[#855333] text-white font-bold shadow-md' : 'text-[#452A1B] font-medium hover:bg-[#DCD0C0]' }}">
                     Dashboard
                 </a>
 
-                <a href="{{ route('admin.products') }}" 
-                   class="flex-1 min-w-[120px] text-center py-2.5 rounded-lg transition-colors text-sm 
+                <a href="{{ route('admin.products') ?? '#' }}" 
+                   class="flex-1 min-w-[100px] text-center py-2.5 rounded-lg transition-colors text-sm 
                    {{ request()->routeIs('admin.products') ? 'bg-[#855333] text-white font-bold shadow-md' : 'text-[#452A1B] font-medium hover:bg-[#DCD0C0]' }}">
                     Products
                 </a>
 
-                <a href="{{ route('admin.reviews') }}" 
-                   class="flex-1 min-w-[120px] text-center py-2.5 rounded-lg transition-colors text-sm 
+                <a href="{{ route('admin.promos') ?? '#' }}" 
+                   class="flex-1 min-w-[100px] text-center py-2.5 rounded-lg transition-colors text-sm 
+                   {{ request()->routeIs('admin.promos') ? 'bg-[#855333] text-white font-bold shadow-md' : 'text-[#452A1B] font-medium hover:bg-[#DCD0C0]' }}">
+                    Promos
+                </a>
+
+                <a href="{{ route('admin.reviews') ?? '#' }}" 
+                   class="flex-1 min-w-[100px] text-center py-2.5 rounded-lg transition-colors text-sm 
                    {{ request()->routeIs('admin.reviews') ? 'bg-[#855333] text-white font-bold shadow-md' : 'text-[#452A1B] font-medium hover:bg-[#DCD0C0]' }}">
                     Reviews
                 </a>
 
-                <a href="{{ route('admin.settings') }}" 
-                   class="flex-1 min-w-[120px] text-center py-2.5 rounded-lg transition-colors text-sm 
+                <a href="{{ route('admin.settings') ?? '#' }}" 
+                   class="flex-1 min-w-[100px] text-center py-2.5 rounded-lg transition-colors text-sm 
                    {{ request()->routeIs('admin.settings') ? 'bg-[#855333] text-white font-bold shadow-md' : 'text-[#452A1B] font-medium hover:bg-[#DCD0C0]' }}">
                     Settings
                 </a>
@@ -125,7 +131,6 @@
     </div>
 </div>
 
-{{-- SCRIPT DROPDOWN TOGGLE --}}
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const notifBtn = document.getElementById('notif-btn');
@@ -134,21 +139,18 @@
         const profileBtn = document.getElementById('profile-btn');
         const profileMenu = document.getElementById('profile-menu');
 
-        // Buka/Tutup Notifikasi
         notifBtn.addEventListener('click', function(e) {
             e.stopPropagation();
             notifMenu.classList.toggle('hidden');
-            profileMenu.classList.add('hidden'); // Tutup profil jika terbuka
+            profileMenu.classList.add('hidden'); 
         });
 
-        // Buka/Tutup Profil
         profileBtn.addEventListener('click', function(e) {
             e.stopPropagation();
             profileMenu.classList.toggle('hidden');
-            notifMenu.classList.add('hidden'); // Tutup notifikasi jika terbuka
+            notifMenu.classList.add('hidden'); 
         });
 
-        // Tutup menu jika klik di luar kotak dropdown
         document.addEventListener('click', function(e) {
             if (!notifMenu.contains(e.target) && !notifBtn.contains(e.target)) {
                 notifMenu.classList.add('hidden');

@@ -4,7 +4,7 @@
 @section('title', 'Notifikasi | Ananda Bakery')
 
 @section('header_title', 'Notifikasi')
-@section('header_subtitle', 'Pantau semua aktivitas toko, pesanan baru, dan pemberitahuan sistem.')
+@section('header_subtitle', 'Pantau semua aktivitas toko, dan pemberitahuan sistem.')
 
 @section('header_actions')
     <button class="bg-white border border-[#EAE2D6] text-[#855333] hover:bg-[#FAF8F5] px-4 py-2.5 rounded-lg text-sm font-bold transition shadow-sm flex items-center gap-2">
