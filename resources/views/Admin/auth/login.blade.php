@@ -23,7 +23,13 @@
         </div>
 
         <div class="bg-white p-8 rounded-2xl shadow-sm border border-[#EAE2D6]">
-            <form method="POST" action="{{ route('admin.login') }}" class="space-y-5">
+            @if ($errors->any())
+                <div class="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                    <p class="font-bold">Login gagal.</p>
+                    <p class="mt-1">{{ $errors->first() }}</p>
+                </div>
+            @endif
+            <form method="POST" action="{{ route('admin.login.post') }}" class="space-y-5">
                 @csrf
                 
                 <div>
@@ -34,7 +40,7 @@
                         </div>
                         <input type="email" name="email" id="email" required autofocus
                             class="w-full pl-11 pr-4 py-3 rounded-xl border border-[#EAE2D6] focus:border-[#BA8E60] focus:ring-1 focus:ring-[#BA8E60] outline-none transition duration-200 bg-[#FAF8F5] text-sm font-medium text-[#452A1B]" 
-                            placeholder="admin@ananda.com">
+                            placeholder="Email">
                     </div>
                 </div>
 

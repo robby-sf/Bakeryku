@@ -15,33 +15,47 @@
 
                 <div class="flex items-center gap-6">
                     
+                    @php
+                        $unreadNotificationsCount = Auth::guard('admin')->user()->unreadNotifications()->count();
+                        $recentNotifications = Auth::guard('admin')->user()->notifications()->latest()->take(5)->get();
+                    @endphp
+
                     <div class="relative">
                         <button id="notif-btn" class="relative p-2 text-white hover:text-gray-200 transition focus:outline-none">
                             <i class="fa-regular fa-bell text-xl"></i>
-                            <span class="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#DE5B6D] text-[10px] font-bold text-white shadow-sm border border-[#855333]">3</span>
+                            <span id="notif-badge" class="absolute top-1 right-1 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-[#DE5B6D] text-[10px] font-bold text-white shadow-sm border border-[#855333]">
+                                {{ $unreadNotificationsCount > 0 ? $unreadNotificationsCount : '0' }}
+                            </span>
                         </button>
 
                         <div id="notif-menu" class="hidden absolute right-0 mt-3 w-80 bg-white z-50 rounded-xl shadow-lg border border-gray-100 overflow-hidden transform origin-top-right transition-all">
                             <div class="bg-[#FAF8F5] px-4 py-3 border-b border-[#EAE2D6] flex justify-between items-center">
-                                <span class="font-bold text-[#452A1B] text-sm">Notifikasi Baru</span>
-                                <span class="text-xs bg-[#855333] text-white px-2 py-0.5 rounded-full">3</span>
+                                <div>
+                                    <span class="font-bold text-[#452A1B] text-sm">Notifikasi</span>
+                                    <p class="text-xs text-gray-500">{{ $unreadNotificationsCount }} belum dibaca</p>
+                                </div>
+                                <button id="notif-mark-all-btn" class="text-xs font-bold text-[#855333] hover:text-[#452A1B] transition">Tandai Semua Dibaca</button>
                             </div>
-                            
-                            <div class="max-h-72 overflow-y-auto">
-                                <a href="#" class="block px-4 py-3 hover:bg-[#FAF8F5] border-b border-gray-50 transition group">
-                                    <p class="text-sm text-[#452A1B] font-medium group-hover:text-[#855333]">Pesanan #4521 berhasil dibayar.</p>
-                                    <p class="text-xs text-gray-400 mt-1"><i class="fa-regular fa-clock mr-1"></i>2 menit yang lalu</p>
-                                </a>
-                                <a href="#" class="block px-4 py-3 hover:bg-[#FAF8F5] border-b border-gray-50 transition group">
-                                    <p class="text-sm text-[#452A1B] font-medium group-hover:text-[#855333]">Ulasan baru pada produk Dubai Series.</p>
-                                    <p class="text-xs text-gray-400 mt-1"><i class="fa-regular fa-clock mr-1"></i>1 jam yang lalu</p>
-                                </a>
-                                <a href="#" class="block px-4 py-3 hover:bg-[#FAF8F5] transition group">
-                                    <p class="text-sm text-[#452A1B] font-medium group-hover:text-[#855333]">Stok Croissant Deluxe hampir habis.</p>
-                                    <p class="text-xs text-gray-400 mt-1"><i class="fa-regular fa-clock mr-1"></i>Kemarin</p>
-                                </a>
+
+                            <div id="notif-list" class="max-h-72 overflow-y-auto">
+                                @forelse($recentNotifications as $notification)
+                                    <button data-id="{{ $notification->id }}" class="notif-item w-full text-left block px-4 py-3 hover:bg-[#FAF8F5] border-b border-gray-50 transition group {{ $notification->is_read ? '' : 'bg-[#FFF5F5]' }}">
+                                        <div class="flex justify-between items-start gap-3">
+                                            <p class="text-sm text-[#452A1B] font-medium group-hover:text-[#855333]">{{ $notification->title }}</p>
+                                            <span class="text-[10px] text-gray-400">{{ $notification->created_at->diffForHumans() }}</span>
+                                        </div>
+                                        <p class="text-xs text-gray-500 mt-1 line-clamp-3">{{ $notification->message }}</p>
+                                        @if(!$notification->is_read)
+                                            <span class="mt-2 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-[#DE5B6D]/10 text-[#DE5B6D] text-[10px] font-semibold">Baru</span>
+                                        @endif
+                                    </button>
+                                @empty
+                                    <div class="px-4 py-6 text-center text-gray-500 text-sm">
+                                        Tidak ada notifikasi terbaru.
+                                    </div>
+                                @endforelse
                             </div>
-                            
+
                             <a href="{{ route('admin.notifications') }}" class="block text-center px-4 py-3 bg-[#EAE2D6]/30 text-sm text-[#855333] hover:bg-[#EAE2D6] font-bold transition border-t border-[#EAE2D6]">
                                 Lihat Semua Notifikasi
                             </a>
@@ -76,7 +90,7 @@
                             </div>
                             
                             <div class="border-t border-[#EAE2D6] py-2">
-                                <form method="POST" action="{{ route('logout') }}">
+                                <form method="POST" action="{{ route('admin.logout') }}">
                                     @csrf
                                     <button type="submit" class="flex w-full items-center gap-3 px-4 py-2 text-sm text-[#DE5B6D] hover:bg-red-50 hover:text-red-700 transition font-bold text-left">
                                         <i class="fa-solid fa-arrow-right-from-bracket w-4 text-center"></i> Logout
@@ -102,15 +116,15 @@
                     Dashboard
                 </a>
 
-                <a href="{{ route('admin.products') }}" 
+                <a href="{{ route('admin.products.index') }}" 
                    class="flex-1 min-w-[120px] text-center py-2.5 rounded-lg transition-colors text-sm 
-                   {{ request()->routeIs('admin.products') ? 'bg-[#855333] text-white font-bold shadow-md' : 'text-[#452A1B] font-medium hover:bg-[#DCD0C0]' }}">
+                   {{ request()->routeIs('admin.products*') ? 'bg-[#855333] text-white font-bold shadow-md' : 'text-[#452A1B] font-medium hover:bg-[#DCD0C0]' }}">
                     Products
                 </a>
 
-                <a href="{{ route('admin.reviews') }}" 
+                <a href="{{ route('admin.reviews.index') }}" 
                    class="flex-1 min-w-[120px] text-center py-2.5 rounded-lg transition-colors text-sm 
-                   {{ request()->routeIs('admin.reviews') ? 'bg-[#855333] text-white font-bold shadow-md' : 'text-[#452A1B] font-medium hover:bg-[#DCD0C0]' }}">
+                   {{ request()->routeIs('admin.reviews*') ? 'bg-[#855333] text-white font-bold shadow-md' : 'text-[#452A1B] font-medium hover:bg-[#DCD0C0]' }}">
                     Reviews
                 </a>
 
@@ -130,32 +144,149 @@
     document.addEventListener('DOMContentLoaded', function () {
         const notifBtn = document.getElementById('notif-btn');
         const notifMenu = document.getElementById('notif-menu');
-        
+        const notifList = document.getElementById('notif-list');
+        const notifBadge = document.getElementById('notif-badge');
+        const markAllBtn = document.getElementById('notif-mark-all-btn');
         const profileBtn = document.getElementById('profile-btn');
         const profileMenu = document.getElementById('profile-menu');
 
-        // Buka/Tutup Notifikasi
-        notifBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            notifMenu.classList.toggle('hidden');
-            profileMenu.classList.add('hidden'); // Tutup profil jika terbuka
-        });
+        const unreadCountUrl = '{{ route('notifications.unread-count') }}';
+        const recentNotificationsUrl = '{{ route('notifications.recent') }}';
+        const markAllReadUrl = '{{ route('notifications.mark-all-read') }}';
 
-        // Buka/Tutup Profil
-        profileBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            profileMenu.classList.toggle('hidden');
-            notifMenu.classList.add('hidden'); // Tutup notifikasi jika terbuka
-        });
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
-        // Tutup menu jika klik di luar kotak dropdown
-        document.addEventListener('click', function(e) {
-            if (!notifMenu.contains(e.target) && !notifBtn.contains(e.target)) {
+        const updateBadge = (count) => {
+            if (!notifBadge) return;
+            notifBadge.textContent = count > 0 ? count : '0';
+        };
+
+        const renderNotifications = (notifications) => {
+            if (!notifList) return;
+
+            if (!notifications.length) {
+                notifList.innerHTML = '<div class="px-4 py-6 text-center text-gray-500 text-sm">Tidak ada notifikasi terbaru.</div>';
+                return;
+            }
+
+            notifList.innerHTML = notifications.map(notification => {
+                const readClass = notification.is_read ? '' : 'bg-[#FFF5F5]';
+                const badge = notification.is_read ? '' : '<span class="mt-2 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-[#DE5B6D]/10 text-[#DE5B6D] text-[10px] font-semibold">Baru</span>';
+                const time = new Date(notification.created_at).toLocaleString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+                return `
+                    <button data-id="${notification.id}" class="notif-item w-full text-left block px-4 py-3 hover:bg-[#FAF8F5] border-b border-gray-50 transition group ${readClass}">
+                        <div class="flex justify-between items-start gap-3">
+                            <p class="text-sm text-[#452A1B] font-medium group-hover:text-[#855333]">${notification.title}</p>
+                            <span class="text-[10px] text-gray-400">${time}</span>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1 line-clamp-3">${notification.message}</p>
+                        ${badge}
+                    </button>
+                `;
+            }).join('');
+        };
+
+        const fetchUnreadCount = async () => {
+            try {
+                const response = await fetch(unreadCountUrl, { headers: { Accept: 'application/json' } });
+                const data = await response.json();
+                updateBadge(data.unread_count ?? 0);
+            } catch (error) {
+                console.error('Unable to fetch unread count', error);
+            }
+        };
+
+        const fetchRecentNotifications = async () => {
+            try {
+                const response = await fetch(recentNotificationsUrl, { headers: { Accept: 'application/json' } });
+                const notifications = await response.json();
+                renderNotifications(notifications);
+            } catch (error) {
+                console.error('Unable to fetch notifications', error);
+            }
+        };
+
+        const markSelectedNotificationAsRead = async (id) => {
+            if (!csrfToken) return;
+            try {
+                await fetch(`/notifications/${id}/read`, {
+                    method: 'POST',
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                });
+                await fetchUnreadCount();
+                await fetchRecentNotifications();
+            } catch (error) {
+                console.error('Unable to mark notification as read', error);
+            }
+        };
+
+        const markAllNotificationsRead = async () => {
+            if (!csrfToken) return;
+            try {
+                await fetch(markAllReadUrl, {
+                    method: 'POST',
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                });
+                await fetchUnreadCount();
+                await fetchRecentNotifications();
+            } catch (error) {
+                console.error('Unable to mark all notifications as read', error);
+            }
+        };
+
+        if (notifBtn) {
+            notifBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                notifMenu.classList.toggle('hidden');
+                profileMenu.classList.add('hidden');
+                fetchUnreadCount();
+                fetchRecentNotifications();
+            });
+        }
+
+        if (markAllBtn) {
+            markAllBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                markAllNotificationsRead();
+            });
+        }
+
+        if (notifList) {
+            notifList.addEventListener('click', function (e) {
+                const button = e.target.closest('.notif-item');
+                if (!button) return;
+                const id = button.dataset.id;
+                if (id) {
+                    markSelectedNotificationAsRead(id);
+                }
+            });
+        }
+
+        if (profileBtn) {
+            profileBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                profileMenu.classList.toggle('hidden');
+                notifMenu.classList.add('hidden');
+            });
+        }
+
+        document.addEventListener('click', function (e) {
+            if (notifMenu && notifBtn && !notifMenu.contains(e.target) && !notifBtn.contains(e.target)) {
                 notifMenu.classList.add('hidden');
             }
-            if (!profileMenu.contains(e.target) && !profileBtn.contains(e.target)) {
+            if (profileMenu && profileBtn && !profileMenu.contains(e.target) && !profileBtn.contains(e.target)) {
                 profileMenu.classList.add('hidden');
             }
         });
+
+        setInterval(fetchUnreadCount, 15000);
     });
 </script>

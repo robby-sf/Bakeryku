@@ -31,24 +31,38 @@
                     </a>
                     <h2 class="text-2xl font-bold text-brand-dark mt-4">Selamat Datang Kembali</h2>
                     <p class="text-gray-500 text-sm mt-1">Silakan masukkan email dan password kamu.</p>
+                    
+                    @if(session('success'))
+                    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mt-4" role="alert">
+                        <span class="block sm:inline">{{ session('success') }}</span>
+                    </div>
+                    @endif
                 </div>
 
-                <form method="POST" action="{{ route('login') }}" class="space-y-6">
+                <form method="POST" action="/login" class="space-y-6">
                     @csrf
                     
+                    @if($errors->any())
+                    <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded" role="alert">
+                        <p class="text-red-700 font-semibold text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-exclamation-circle"></i>
+                            @foreach ($errors->all() as $error)
+                                {{ $error }}
+                                @if (!$loop->last)<br>@endif
+                            @endforeach
+                        </p>
+                    </div>
+                    @endif
                     <div>
                         <label for="email" class="block text-sm font-semibold text-brand-dark mb-1.5">Email</label>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <i class="fa-regular fa-envelope text-gray-400"></i>
                             </div>
-                            <input type="email" name="email" id="email" required autofocus
-                                class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 outline-none transition duration-200 bg-brand-light/50" 
+                            <input type="email" name="email" id="email" required autofocus value="{{ old('email') }}"
+                                class="w-full pl-10 pr-4 py-3 rounded-xl border transition duration-200 focus:ring-2 outline-none bg-brand-light/50 @error('email') border-red-500 focus:border-red-500 focus:ring-red-200 @else border-gray-200 focus:border-brand-primary focus:ring-brand-primary/20 @enderror" 
                                 placeholder="nama@email.com">
                         </div>
-                        @error('email')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
                     </div>
 
                     <div>
@@ -58,15 +72,12 @@
                                 <i class="fa-solid fa-lock text-gray-400"></i>
                             </div>
                             <input type="password" name="password" id="password" required
-                                class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 outline-none transition duration-200 bg-brand-light/50" 
+                                class="w-full pl-10 pr-4 py-3 rounded-xl border transition duration-200 focus:ring-2 outline-none bg-brand-light/50 @error('password') border-red-500 focus:border-red-500 focus:ring-red-200 @else border-gray-200 focus:border-brand-primary focus:ring-brand-primary/20 @enderror" 
                                 placeholder="••••••••">
                             <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-brand-primary">
                                 <i class="fa-regular fa-eye"></i>
                             </button>
                         </div>
-                        @error('password')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
                     </div>
 
                     <div class="flex items-center justify-between text-sm">
@@ -96,7 +107,7 @@
 
                 <p class="text-center text-sm text-gray-600 mt-8">
                     Belum punya akun? 
-                    <a href="{{ route('register') }}" class="font-bold text-brand-primary hover:text-brand-dark transition">Daftar sekarang</a>
+                    <a href="/register" class="font-bold text-brand-primary hover:text-brand-dark transition">Daftar sekarang</a>
                 </p>
             </div>
         </div>
