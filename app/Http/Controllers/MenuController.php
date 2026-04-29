@@ -16,7 +16,12 @@ class MenuController extends Controller
         $reviews = $product->approvedReviews()->latest()->paginate(10);
         $averageRating = $product->averageRating();
         $reviewCount = $product->reviewCount();
+        $isFavorited = false;
 
-        return view('Menu.menu_view', compact('product', 'reviews', 'averageRating', 'reviewCount'));
+        if (auth()->guard('user')->check()) {
+            $isFavorited = auth()->guard('user')->user()->favorites()->where('product_id', $product->id)->exists();
+        }
+
+        return view('Menu.menu_view', compact('product', 'reviews', 'averageRating', 'reviewCount', 'isFavorited'));
     }
 }

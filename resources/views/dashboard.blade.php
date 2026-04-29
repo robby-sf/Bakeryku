@@ -29,8 +29,11 @@
                             <p class="text-sm text-gray-500">View your order history</p>
                         </div>
                     </div>
-                    <p class="text-2xl font-bold text-brand-primary">0</p>
+                    <p class="text-2xl font-bold text-brand-primary">{{ Auth::guard('user')->user()->orders()->count() }}</p>
                     <p class="text-sm text-gray-500">Total orders</p>
+                    <div class="mt-4">
+                        <a href="{{ route('orders.index') }}" class="text-sm font-semibold text-brand-primary hover:underline">Lihat riwayat</a>
+                    </div>
                 </div>
 
                 <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
@@ -57,8 +60,11 @@
                             <p class="text-sm text-gray-500">Saved products</p>
                         </div>
                     </div>
-                    <p class="text-2xl font-bold text-green-500">0</p>
+                    <p class="text-2xl font-bold text-green-500">{{ Auth::guard('user')->user()->favorites()->count() }}</p>
                     <p class="text-sm text-gray-500">Favorite items</p>
+                    <div class="mt-4">
+                        <a href="{{ route('favorites.index') }}" class="text-sm font-semibold text-brand-primary hover:underline">Lihat favorit</a>
+                    </div>
                 </div>
             </div>
 

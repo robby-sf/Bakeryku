@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', '{{ $product->name }} | Slice Bread Bakery')
+@section('title', $product->name . ' | Slice Bread Bakery')
 
 @section('content')
     <div class="py-8 md:py-12">
@@ -13,28 +13,23 @@
             <div class="flex flex-col md:flex-row gap-8 lg:gap-12 mb-16 md:mb-24">
                 
                 <div class="w-full md:w-1/2 flex flex-col gap-4">
+                    @php
+                        $galleryImages = collect([$product->image, $product->image_2, $product->image_3])->filter()->values();
+                        $galleryPlaceholder = 'https://images.unsplash.com/photo-1495147466023-ac5c588e2e94?q=80&w=800&auto=format&fit=crop';
+                    @endphp
+
                     <div class="bg-[#EAE4D9] rounded-2xl aspect-square flex items-center justify-center p-8 overflow-hidden">
-                        @if($product->image)
-                            <img src="{{ Storage::url($product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover rounded-xl mix-blend-multiply opacity-90 hover:scale-105 transition duration-500">
-                        @else
-                            <img src="https://images.unsplash.com/photo-1495147466023-ac5c588e2e94?q=80&w=800&auto=format&fit=crop" alt="{{ $product->name }}" class="w-full h-full object-cover rounded-xl mix-blend-multiply opacity-90 hover:scale-105 transition duration-500">
-                        @endif
+                        <img src="{{ $galleryImages->first() ? Storage::url($galleryImages->first()) : $galleryPlaceholder }}" alt="{{ $product->name }}" class="w-full h-full object-cover rounded-xl mix-blend-multiply opacity-90 hover:scale-105 transition duration-500">
                     </div>
-                    <div class="flex gap-4">
-                        <button class="w-20 h-20 bg-[#EAE4D9] rounded-xl overflow-hidden border-2 border-brand-primary p-1">
-                            @if($product->image)
-                                <img src="{{ Storage::url($product->image) }}" class="w-full h-full object-cover rounded-lg mix-blend-multiply" alt="Thumb 1">
-                            @else
-                                <img src="https://images.unsplash.com/photo-1495147466023-ac5c588e2e94?q=80&w=200&auto=format&fit=crop" class="w-full h-full object-cover rounded-lg mix-blend-multiply" alt="Thumb 1">
-                            @endif
-                        </button>
-                        <button class="w-20 h-20 bg-[#EAE4D9] rounded-xl overflow-hidden border-2 border-transparent hover:border-brand-primary transition p-1 opacity-70 hover:opacity-100">
-                            <img src="https://images.unsplash.com/photo-1495147466023-ac5c588e2e94?q=80&w=200&auto=format&fit=crop" class="w-full h-full object-cover rounded-lg mix-blend-multiply" alt="Thumb 2">
-                        </button>
-                        <button class="w-20 h-20 bg-[#EAE4D9] rounded-xl overflow-hidden border-2 border-transparent hover:border-brand-primary transition p-1 opacity-70 hover:opacity-100">
-                            <img src="https://images.unsplash.com/photo-1495147466023-ac5c588e2e94?q=80&w=200&auto=format&fit=crop" class="w-full h-full object-cover rounded-lg mix-blend-multiply" alt="Thumb 3">
-                        </button>
-                    </div>
+                    @if ($galleryImages->count())
+                        <div class="flex gap-4">
+                            @foreach($galleryImages->take(3) as $image)
+                                <button type="button" class="w-20 h-20 bg-[#EAE4D9] rounded-xl overflow-hidden border-2 border-transparent hover:border-brand-primary transition p-1 opacity-70 hover:opacity-100">
+                                    <img src="{{ Storage::url($image) }}" class="w-full h-full object-cover rounded-lg mix-blend-multiply" alt="{{ $product->name }} gallery">
+                                </button>
+                            @endforeach
+                        </div>
+                    @endif
                 </div>
 
                 <div class="w-full md:w-1/2 flex flex-col justify-start pt-2">
@@ -83,22 +78,42 @@
                             <span class="font-bold text-brand-dark text-sm">Quantity:</span>
                             <div class="flex items-center border border-gray-300 rounded-lg overflow-hidden w-32 bg-white quantity-input">
                                 <button class="quantity-minus px-4 py-2 text-gray-600 hover:bg-gray-100 transition"><i class="fa-solid fa-minus text-xs"></i></button>
-                                <input type="text" value="1" class="quantity-value w-full text-center py-2 font-semibold text-brand-dark focus:outline-none" readonly>
+                                <input type="text" id="quantity-display" value="1" class="quantity-value w-full text-center py-2 font-semibold text-brand-dark focus:outline-none" readonly>
                                 <button class="quantity-plus px-4 py-2 text-gray-600 hover:bg-gray-100 transition"><i class="fa-solid fa-plus text-xs"></i></button>
                             </div>
                         </div>
 
                         <div class="flex flex-wrap md:flex-nowrap gap-3">
-                            <button class="flex-grow bg-[#8C5230] hover:bg-[#683b21] text-white font-semibold py-3 px-6 rounded-xl transition duration-300 shadow-md flex justify-center items-center gap-2 text-sm md:text-base">
+                        @if(Auth::guard('user')->check() && Auth::guard('user')->user()->role === 'user')
+                            <form action="{{ route('orders.whatsapp') }}" method="POST" class="flex-grow">
+                                @csrf
+                                <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                <input type="hidden" id="order-quantity" name="quantity" value="1">
+                                <button type="submit" class="w-full bg-[#8C5230] hover:bg-[#683b21] text-white font-semibold py-3 px-6 rounded-xl transition duration-300 shadow-md flex justify-center items-center gap-2 text-sm md:text-base">
+                                    Order via WhatsApp
+                                </button>
+                            </form>
+
+                            <form action="{{ route('favorites.toggle') }}" method="POST" class="flex-shrink-0">
+                                @csrf
+                                <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                <button type="submit" class="heart-btn w-12 h-12 md:w-14 md:h-14 flex justify-center items-center border rounded-xl transition bg-white shadow-sm" style="border-color: {{ $isFavorited ? '#f87171' : '#d1d5db' }}; color: {{ $isFavorited ? '#dc2626' : '#6b7280' }};">
+                                    <i class="fa-{{ $isFavorited ? 'solid' : 'regular' }} fa-heart text-lg md:text-xl"></i>
+                                </button>
+                            </form>
+                        @else
+                            <a href="{{ route('login') }}" class="flex-grow bg-[#8C5230] hover:bg-[#683b21] text-white font-semibold py-3 px-6 rounded-xl transition duration-300 shadow-md flex justify-center items-center gap-2 text-sm md:text-base">
                                 Order via WhatsApp
-                            </button>
-                            <button class="heart-btn w-12 h-12 md:w-14 md:h-14 flex justify-center items-center border border-gray-300 rounded-xl text-gray-500 hover:text-red-500 hover:border-red-500 transition bg-white shadow-sm flex-shrink-0">
+                            </a>
+                            <a href="{{ route('login') }}" class="heart-btn w-12 h-12 md:w-14 md:h-14 flex justify-center items-center border border-gray-300 rounded-xl text-gray-500 hover:text-red-500 hover:border-red-500 transition bg-white shadow-sm flex-shrink-0">
                                 <i class="fa-regular fa-heart text-lg md:text-xl"></i>
-                            </button>
-                            <button class="share-btn w-12 h-12 md:w-14 md:h-14 flex justify-center items-center border border-gray-300 rounded-xl text-gray-500 hover:text-brand-primary hover:border-brand-primary transition bg-white shadow-sm flex-shrink-0">
-                                <i class="fa-solid fa-share-nodes text-lg md:text-xl"></i>
-                            </button>
-                        </div>
+                            </a>
+                        @endif
+
+                        <button class="share-btn w-12 h-12 md:w-14 md:h-14 flex justify-center items-center border border-gray-300 rounded-xl text-gray-500 hover:text-brand-primary hover:border-brand-primary transition bg-white shadow-sm flex-shrink-0">
+                            <i class="fa-solid fa-share-nodes text-lg md:text-xl"></i>
+                        </button>
+                    </div>
                     </div>
 
                 </div>
@@ -288,4 +303,32 @@
         });
     </script>
     @endif
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const quantityMinus = document.querySelector('.quantity-minus');
+            const quantityPlus = document.querySelector('.quantity-plus');
+            const quantityDisplay = document.getElementById('quantity-display');
+            const orderQuantity = document.getElementById('order-quantity');
+
+            if (quantityMinus && quantityPlus && quantityDisplay && orderQuantity) {
+                let quantity = parseInt(quantityDisplay.value, 10) || 1;
+
+                quantityMinus.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    if (quantity > 1) {
+                        quantity -= 1;
+                        quantityDisplay.value = quantity;
+                        orderQuantity.value = quantity;
+                    }
+                });
+
+                quantityPlus.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    quantity += 1;
+                    quantityDisplay.value = quantity;
+                    orderQuantity.value = quantity;
+                });
+            }
+        });
+    </script>
 @endsection

@@ -36,13 +36,24 @@ class ProductController extends Controller
             'price' => ['required', 'integer', 'min:0'],
             'description' => ['nullable', 'string'],
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
+            'image_2' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
+            'image_3' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
             'status' => ['required', 'in:Tersedia,Habis'],
         ]);
 
-        // Handle image upload
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('products', 'public');
             $validated['image'] = $imagePath;
+        }
+
+        if ($request->hasFile('image_2')) {
+            $imagePath = $request->file('image_2')->store('products', 'public');
+            $validated['image_2'] = $imagePath;
+        }
+
+        if ($request->hasFile('image_3')) {
+            $imagePath = $request->file('image_3')->store('products', 'public');
+            $validated['image_3'] = $imagePath;
         }
 
         Product::create($validated);
@@ -77,17 +88,33 @@ class ProductController extends Controller
             'price' => ['required', 'integer', 'min:0'],
             'description' => ['nullable', 'string'],
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
+            'image_2' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
+            'image_3' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
             'status' => ['required', 'in:Tersedia,Habis'],
         ]);
 
-        // Handle image upload
         if ($request->hasFile('image')) {
-            // Delete old image if exists
             if ($product->image) {
                 \Storage::disk('public')->delete($product->image);
             }
             $imagePath = $request->file('image')->store('products', 'public');
             $validated['image'] = $imagePath;
+        }
+
+        if ($request->hasFile('image_2')) {
+            if ($product->image_2) {
+                \Storage::disk('public')->delete($product->image_2);
+            }
+            $imagePath = $request->file('image_2')->store('products', 'public');
+            $validated['image_2'] = $imagePath;
+        }
+
+        if ($request->hasFile('image_3')) {
+            if ($product->image_3) {
+                \Storage::disk('public')->delete($product->image_3);
+            }
+            $imagePath = $request->file('image_3')->store('products', 'public');
+            $validated['image_3'] = $imagePath;
         }
 
         $product->update($validated);

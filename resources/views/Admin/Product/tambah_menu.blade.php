@@ -102,6 +102,18 @@
                     </div>
                 </div>
 
+                <div class="md:col-span-2 mt-4">
+                    <label for="image_2" class="block text-sm font-bold text-[#855333] mb-2">Gambar Produk 2 <span class="text-gray-400 text-xs">(Opsional)</span></label>
+                    <input type="file" name="image_2" id="image_2" accept="image/*" class="w-full bg-[#FAF8F5] border border-[#EAE2D6] rounded-xl px-4 py-3 text-sm text-[#452A1B] focus:outline-none focus:border-[#BA8E60] focus:ring-1 focus:ring-[#BA8E60] transition-colors" />
+                    <p class="text-xs text-gray-500 mt-2">Opsional. Akan muncul sebagai gambar galeri tambahan. Gambar utama tetap diambil dari kolom Gambar Produk pertama.</p>
+                </div>
+
+                <div class="md:col-span-2 mt-4">
+                    <label for="image_3" class="block text-sm font-bold text-[#855333] mb-2">Gambar Produk 3 <span class="text-gray-400 text-xs">(Opsional)</span></label>
+                    <input type="file" name="image_3" id="image_3" accept="image/*" class="w-full bg-[#FAF8F5] border border-[#EAE2D6] rounded-xl px-4 py-3 text-sm text-[#452A1B] focus:outline-none focus:border-[#BA8E60] focus:ring-1 focus:ring-[#BA8E60] transition-colors" />
+                    <p class="text-xs text-gray-500 mt-2">Opsional. Akan muncul sebagai gambar galeri tambahan. Gambar utama tetap diambil dari kolom Gambar Produk pertama.</p>
+                </div>
+
             </div>
         </div>
 

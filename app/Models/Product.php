@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\Favorite;
+use App\Models\Order;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -15,6 +17,8 @@ class Product extends Model
         'price',
         'description',
         'image',
+        'image_2',
+        'image_3',
         'status',
     ];
 
@@ -54,6 +58,30 @@ class Product extends Model
     public function reviewCount(): int
     {
         return $this->approvedReviews()->count();
+    }
+
+    /**
+     * Get the gallery images for this product.
+     */
+    public function getGalleryImagesAttribute()
+    {
+        return collect([$this->image, $this->image_2, $this->image_3])->filter()->values();
+    }
+
+    /**
+     * Get favorites for this product.
+     */
+    public function favorites(): HasMany
+    {
+        return $this->hasMany(Favorite::class);
+    }
+
+    /**
+     * Get orders for this product.
+     */
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class);
     }
 }
 
