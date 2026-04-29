@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login | Ananda Bakery</title>
+    <title>Admin Login | Sliced Bread Bakery</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -19,7 +19,7 @@
                 <i class="fa-solid fa-croissant"></i>
             </div>
             <h1 class="font-heading text-3xl font-bold tracking-wide uppercase">Admin Portal</h1>
-            <p class="text-sm text-gray-500 mt-2">Silakan masuk untuk mengelola Ananda Bakery.</p>
+            <p class="text-sm text-gray-500 mt-2">Silakan masuk untuk mengelola Sliced Bread Bakery.</p>
         </div>
 
         <div class="bg-white p-8 rounded-2xl shadow-sm border border-[#EAE2D6]">
@@ -40,7 +40,7 @@
                         </div>
                         <input type="email" name="email" id="email" required autofocus
                             class="w-full pl-11 pr-4 py-3 rounded-xl border border-[#EAE2D6] focus:border-[#BA8E60] focus:ring-1 focus:ring-[#BA8E60] outline-none transition duration-200 bg-[#FAF8F5] text-sm font-medium text-[#452A1B]" 
-                            placeholder="Email">
+                            placeholder="admin@slicedbread.com">
                     </div>
                 </div>
 
@@ -77,7 +77,7 @@
         </div>
 
         <p class="text-center text-sm text-gray-500 mt-8">
-            &copy; {{ date('Y') }} Ananda Bakery. All rights reserved.
+            &copy; {{ date('Y') }} Sliced Bread Bakery. All rights reserved.
         </p>
 
     </div>

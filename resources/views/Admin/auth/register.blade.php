@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Register | Ananda Bakery</title>
+    <title>Admin Register | Sliced Bread Bakery</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -19,7 +19,7 @@
                 <i class="fa-solid fa-shield-halved"></i>
             </div>
             <h1 class="font-heading text-2xl font-bold tracking-wide uppercase">Registrasi Admin</h1>
-            <p class="text-sm text-gray-500 mt-1">Buat kredensial akses untuk staf internal.</p>
+            <p class="text-sm text-gray-500 mt-1">Buat kredensial akses untuk staf internal Sliced Bread Bakery.</p>
         </div>
 
         <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-[#EAE2D6]">
@@ -36,24 +36,14 @@
             <form method="POST" action="{{ route('admin.register.post') }}" class="space-y-5">
                 @csrf
                 
-                <div>
-                    <label for="admin_code" class="block text-sm font-bold text-[#855333] mb-1.5 flex items-center gap-2">
-                        <i class="fa-solid fa-key text-[10px]"></i> Kode Akses (Invite Code)
-                    </label>
-                    <input type="text" name="admin_code" id="admin_code" required autofocus
-                        class="w-full px-4 py-3 rounded-xl border border-red-200 focus:border-red-400 focus:ring-1 focus:ring-red-400 outline-none transition duration-200 bg-red-50 text-sm font-bold text-red-900 tracking-widest placeholder-red-300" 
-                        placeholder="KODE-RAHASIA">
-                    <p class="text-[10px] text-gray-400 mt-1.5">*Wajib diisi. Minta kode ini kepada Store Manager Anda.</p>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 border-t border-[#EAE2D6] pt-5">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div class="md:col-span-2">
                         <label for="name" class="block text-sm font-bold text-[#452A1B] mb-1.5">Nama Lengkap</label>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                                 <i class="fa-regular fa-user text-gray-400"></i>
                             </div>
-                            <input type="text" name="name" id="name" required
+                            <input type="text" name="name" id="name" required autofocus
                                 class="w-full pl-11 pr-4 py-3 rounded-xl border border-[#EAE2D6] focus:border-[#BA8E60] focus:ring-1 focus:ring-[#BA8E60] outline-none transition duration-200 bg-[#FAF8F5] text-sm font-medium text-[#452A1B]" 
                                 placeholder="Cth: Budi Santoso">
                         </div>
@@ -67,7 +57,7 @@
                             </div>
                             <input type="email" name="email" id="email" required
                                 class="w-full pl-11 pr-4 py-3 rounded-xl border border-[#EAE2D6] focus:border-[#BA8E60] focus:ring-1 focus:ring-[#BA8E60] outline-none transition duration-200 bg-[#FAF8F5] text-sm font-medium text-[#452A1B]" 
-                                placeholder="nama@ananda.com">
+                                placeholder="nama@slicedbread.com">
                         </div>
                     </div>
 

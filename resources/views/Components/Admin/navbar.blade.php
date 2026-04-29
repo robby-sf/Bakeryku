@@ -81,10 +81,10 @@
                             </div>
                             
                             <div class="py-2">
-                                <a href="{{ route('admin.profile') }}" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-[#FAF8F5] hover:text-[#855333] transition font-medium">
+                                <a href="{{ route('admin.profile') ?? '#' }}" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-[#FAF8F5] hover:text-[#855333] transition font-medium">
                                     <i class="fa-regular fa-circle-user w-4 text-center"></i> Profil Saya
                                 </a>
-                                <a href="{{ route('admin.settings') }}" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-[#FAF8F5] hover:text-[#855333] transition font-medium">
+                                <a href="{{ route('admin.settings') ?? '#' }}" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-[#FAF8F5] hover:text-[#855333] transition font-medium">
                                     <i class="fa-solid fa-gear w-4 text-center"></i> Pengaturan Akun
                                 </a>
                             </div>
@@ -110,8 +110,8 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <nav class="bg-[#EAE2D6] rounded-xl flex items-center justify-between p-1.5 overflow-x-auto hide-scroll-bar">
                 
-                <a href="{{ route('admin.dashboard') }}" 
-                   class="flex-1 min-w-[120px] text-center py-2.5 rounded-lg transition-colors text-sm 
+                <a href="{{ route('admin.dashboard') ?? '#' }}" 
+                   class="flex-1 min-w-[100px] text-center py-2.5 rounded-lg transition-colors text-sm 
                    {{ request()->routeIs('admin.dashboard') ? 'bg-[#855333] text-white font-bold shadow-md' : 'text-[#452A1B] font-medium hover:bg-[#DCD0C0]' }}">
                     Dashboard
                 </a>
@@ -128,8 +128,14 @@
                     Reviews
                 </a>
 
-                <a href="{{ route('admin.settings') }}" 
-                   class="flex-1 min-w-[120px] text-center py-2.5 rounded-lg transition-colors text-sm 
+                <a href="{{ route('admin.promos') }}" 
+                   class="flex-1 min-w-[100px] text-center py-2.5 rounded-lg transition-colors text-sm 
+                   {{ request()->routeIs('admin.promos*') ? 'bg-[#855333] text-white font-bold shadow-md' : 'text-[#452A1B] font-medium hover:bg-[#DCD0C0]' }}">
+                    Promos
+                </a>
+
+                <a href="{{ route('admin.settings') ?? '#' }}" 
+                   class="flex-1 min-w-[100px] text-center py-2.5 rounded-lg transition-colors text-sm 
                    {{ request()->routeIs('admin.settings') ? 'bg-[#855333] text-white font-bold shadow-md' : 'text-[#452A1B] font-medium hover:bg-[#DCD0C0]' }}">
                     Settings
                 </a>
@@ -139,7 +145,6 @@
     </div>
 </div>
 
-{{-- SCRIPT DROPDOWN TOGGLE --}}
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const notifBtn = document.getElementById('notif-btn');

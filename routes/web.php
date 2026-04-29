@@ -7,6 +7,8 @@ use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 use App\Http\Controllers\Admin\NotificationController as AdminNotificationController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\FavoriteController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\NotificationController;
@@ -77,6 +79,12 @@ Route::middleware(['user'])->group(function () {
     Route::delete('/notifications/{notification}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
     Route::get('/notifications/unread-count', [NotificationController::class, 'unreadCount'])->name('notifications.unread-count');
     Route::get('/notifications/recent', [NotificationController::class, 'recent'])->name('notifications.recent');
+
+    Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
+    Route::post('/favorites/toggle', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
+
+    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::post('/orders/whatsapp', [OrderController::class, 'store'])->name('orders.whatsapp');
 });
 
 // Admin protected routes (requires auth+admin role)
@@ -111,6 +119,10 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     Route::get('/notifications', [AdminNotificationController::class, 'index'])->name('notifications');
     Route::get('/activities', function () {return view('Admin.Activities.activities');})->name('activities');
     
+    // Promo routes
+    Route::get('/promos', function () {return view('Admin.Promo.promos');})->name('promos');
+    Route::get('/promos/add', function () {return view('Admin.Promo.add_promos');})->name('promos.add');
+    
     // Profile routes
     Route::get('/profile', [AdminProfileController::class, 'show'])->name('profile');
     Route::post('/profile/update', [AdminProfileController::class, 'updateProfile'])->name('profile.update');
@@ -120,4 +132,3 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
 Route::get('/admin/auth/logout', function () {
     return redirect()->route('admin.login')->with('info', 'Silakan gunakan tombol logout untuk keluar dari akun admin.');
 });
-

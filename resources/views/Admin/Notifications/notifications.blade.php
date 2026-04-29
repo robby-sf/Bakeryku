@@ -4,7 +4,7 @@
 @section('title', 'Notifikasi | Ananda Bakery')
 
 @section('header_title', 'Notifikasi')
-@section('header_subtitle', 'Pantau semua aktivitas toko, pesanan baru, dan pemberitahuan sistem.')
+@section('header_subtitle', 'Pantau semua aktivitas toko, dan pemberitahuan sistem.')
 
 @section('header_actions')
     <form method="POST" action="{{ route('notifications.mark-all-read') }}">
