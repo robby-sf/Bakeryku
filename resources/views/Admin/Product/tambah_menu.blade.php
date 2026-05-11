@@ -9,12 +9,12 @@
 @section('content')
 
     <div class="mb-6">
-        <a href="{{ route('admin.products') }}" class="inline-flex items-center gap-2 text-sm font-bold text-[#855333] hover:text-[#452A1B] transition-colors">
+        <a href="{{ route('admin.products.index') }}" class="inline-flex items-center gap-2 text-sm font-bold text-[#855333] hover:text-[#452A1B] transition-colors">
             <i class="fa-solid fa-arrow-left"></i> Kembali ke Daftar Menu
         </a>
     </div>
 
-    <form action="#" method="POST" enctype="multipart/form-data" class="max-w-4xl">
+    <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data" class="max-w-4xl">
         @csrf
         
         <div class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-[#EAE2D6]">
@@ -102,11 +102,23 @@
                     </div>
                 </div>
 
+                <div class="md:col-span-2 mt-4">
+                    <label for="image_2" class="block text-sm font-bold text-[#855333] mb-2">Gambar Produk 2 <span class="text-gray-400 text-xs">(Opsional)</span></label>
+                    <input type="file" name="image_2" id="image_2" accept="image/*" class="w-full bg-[#FAF8F5] border border-[#EAE2D6] rounded-xl px-4 py-3 text-sm text-[#452A1B] focus:outline-none focus:border-[#BA8E60] focus:ring-1 focus:ring-[#BA8E60] transition-colors" />
+                    <p class="text-xs text-gray-500 mt-2">Opsional. Akan muncul sebagai gambar galeri tambahan. Gambar utama tetap diambil dari kolom Gambar Produk pertama.</p>
+                </div>
+
+                <div class="md:col-span-2 mt-4">
+                    <label for="image_3" class="block text-sm font-bold text-[#855333] mb-2">Gambar Produk 3 <span class="text-gray-400 text-xs">(Opsional)</span></label>
+                    <input type="file" name="image_3" id="image_3" accept="image/*" class="w-full bg-[#FAF8F5] border border-[#EAE2D6] rounded-xl px-4 py-3 text-sm text-[#452A1B] focus:outline-none focus:border-[#BA8E60] focus:ring-1 focus:ring-[#BA8E60] transition-colors" />
+                    <p class="text-xs text-gray-500 mt-2">Opsional. Akan muncul sebagai gambar galeri tambahan. Gambar utama tetap diambil dari kolom Gambar Produk pertama.</p>
+                </div>
+
             </div>
         </div>
 
         <div class="flex justify-end gap-4 mt-6">
-            <a href="{{ route('admin.products') }}" class="px-6 py-3 rounded-xl text-sm font-bold text-[#855333] hover:bg-[#EAE2D6] transition-colors">
+            <a href="{{ route('admin.products.index') }}" class="px-6 py-3 rounded-xl text-sm font-bold text-[#855333] hover:bg-[#EAE2D6] transition-colors">
                 Batal
             </a>
             <button type="submit" class="bg-[#452A1B] hover:bg-[#5C3925] text-white px-8 py-3 rounded-xl text-sm font-bold shadow-sm transition-colors flex items-center gap-2">

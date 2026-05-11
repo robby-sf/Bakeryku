@@ -34,9 +34,22 @@
                     <p class="text-gray-500 text-sm mt-1">Lengkapi data di bawah ini untuk bergabung.</p>
                 </div>
 
-                <form method="POST" action="{{ route('register') }}" class="space-y-5">
+                <form method="POST" action="/register" class="space-y-5">
                     @csrf
                     
+                    @if($errors->any())
+                    <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded" role="alert">
+                        <p class="text-red-700 font-semibold text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-exclamation-circle"></i>
+                            <span>Terjadi kesalahan saat mendaftar:</span>
+                        </p>
+                        <ul class="mt-2 ml-6 text-red-600 text-xs space-y-1">
+                            @foreach ($errors->all() as $error)
+                                <li>• {{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                    @endif
                     <div>
                         <label for="name" class="block text-sm font-semibold text-brand-dark mb-1.5">Nama Lengkap</label>
                         <div class="relative">
@@ -123,7 +136,7 @@
 
                 <p class="text-center text-sm text-gray-600 mt-8">
                     Sudah punya akun? 
-                    <a href="{{ route('login') }}" class="font-bold text-brand-primary hover:text-brand-dark transition">Masuk di sini</a>
+                    <a href="/login" class="font-bold text-brand-primary hover:text-brand-dark transition">Masuk di sini</a>
                 </p>
             </div>
         </div>

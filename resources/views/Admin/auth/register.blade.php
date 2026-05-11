@@ -23,7 +23,17 @@
         </div>
 
         <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-[#EAE2D6]">
-            <form method="POST" action="{{ route('admin.register') }}" class="space-y-5">
+            @if ($errors->any())
+                <div class="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                    <p class="font-bold">Registrasi gagal.</p>
+                    <ul class="mt-1 list-disc list-inside">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+            <form method="POST" action="{{ route('admin.register.post') }}" class="space-y-5">
                 @csrf
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">

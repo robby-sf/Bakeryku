@@ -13,7 +13,7 @@
         <div class="bg-white rounded-2xl p-6 shadow-sm border border-[#EAE2D6] flex justify-between items-start transition hover:shadow-md">
             <div>
                 <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Total Menu</p>
-                <h3 class="font-heading text-3xl font-bold text-[#452A1B]">24</h3>
+                <h3 class="font-heading text-3xl font-bold text-[#452A1B]">{{ $totalProducts }}</h3>
                 <p class="text-[10px] text-gray-400 mt-2 font-medium">+2 bulan ini</p>
             </div>
             <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center text-xl shadow-sm border border-blue-100">
@@ -24,7 +24,7 @@
         <div class="bg-white rounded-2xl p-6 shadow-sm border border-[#EAE2D6] flex justify-between items-start transition hover:shadow-md">
             <div>
                 <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Total Ulasan</p>
-                <h3 class="font-heading text-3xl font-bold text-[#452A1B]">1,234</h3>
+                <h3 class="font-heading text-3xl font-bold text-[#452A1B]">{{ number_format($totalReviews) }}</h3>
                 <p class="text-[10px] text-gray-400 mt-2 font-medium">+124 bulan ini</p>
             </div>
             <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-500 flex items-center justify-center text-xl shadow-sm border border-emerald-100">
@@ -35,7 +35,7 @@
         <div class="bg-[#FCFAFC] rounded-2xl p-6 shadow-sm border-2 border-[#855333]/20 flex justify-between items-start transition hover:shadow-md">
             <div>
                 <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Rata-rata Rating</p>
-                <h3 class="font-heading text-3xl font-bold text-[#452A1B]">4.8</h3>
+                <h3 class="font-heading text-3xl font-bold text-[#452A1B]">{{ number_format($averageRating, 1) }}</h3>
                 <p class="text-[10px] text-[#BA8E60] font-bold mt-2 flex items-center gap-1">
                     <i class="fa-solid fa-star"></i> Sangat Memuaskan
                 </p>

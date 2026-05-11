@@ -11,6 +11,11 @@ export default defineConfig({
         tailwindcss(),
     ],
     server: {
+        host: 'bakeryku.test',
+        port: 5173,
+        hmr: {
+            host: 'bakeryku.test',
+        },
         watch: {
             ignored: ['**/storage/framework/views/**'],
         },
