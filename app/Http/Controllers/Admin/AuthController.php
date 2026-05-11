@@ -15,6 +15,10 @@ class AuthController extends Controller
      */
     public function showLogin()
     {
+        if (Auth::guard('admin')->check() && Auth::guard('admin')->user()->role === 'admin') {
+            return redirect()->route('admin.dashboard');
+        }
+
         return view('Admin.auth.login');
     }
 
@@ -116,8 +120,6 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         Auth::guard('admin')->logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
         return redirect()->route('admin.login')->with('success', 'Logout berhasil.');
     }
 }

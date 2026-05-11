@@ -53,26 +53,6 @@
                     </form>
                 </div>
             </div>
-            @elseif(Auth::guard('admin')->check() && Auth::guard('admin')->user()->role === 'admin')
-            <div class="relative hidden md:block">
-                <button id="admin-menu-btn" class="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold py-2 px-4 rounded-full transition duration-300 shadow-md">
-                    <i class="fa-solid fa-shield-alt"></i>
-                    {{ Auth::guard('admin')->user()->name }}
-                    <i class="fa-solid fa-chevron-down text-xs"></i>
-                </button>
-                <div id="admin-menu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-100 py-2 z-50">
-                    <a href="{{ route('admin.dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        <i class="fa-solid fa-tachometer-alt mr-2"></i> Admin Dashboard
-                    </a>
-                    <hr class="border-gray-100 my-1">
-                    <form method="POST" action="{{ route('admin.logout') }}" class="block">
-                        @csrf
-                        <button type="submit" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                            <i class="fa-solid fa-sign-out-alt mr-2"></i> Logout
-                        </button>
-                    </form>
-                </div>
-            </div>
             @else
             <a href="/login" class="hidden md:block bg-brand-primary hover:bg-brand-dark text-white text-sm font-semibold py-2 px-6 rounded-full transition duration-300 shadow-md whitespace-nowrap">
                 LOGIN/SIGN UP
@@ -104,19 +84,6 @@
                     <i class="fa-solid fa-user mr-2"></i> Profile
                 </a>
                 <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit" class="w-full bg-red-500 hover:bg-red-600 text-white text-sm font-semibold py-3 px-6 rounded-full transition duration-300 shadow-md">
-                        <i class="fa-solid fa-sign-out-alt mr-2"></i> Logout
-                    </button>
-                </form>
-            </div>
-            @elseif(Auth::guard('admin')->check() && Auth::guard('admin')->user()->role === 'admin')
-            <div class="space-y-2">
-                <p class="text-red-600 font-semibold">{{ Auth::guard('admin')->user()->name }} (Admin)</p>
-                <a href="{{ route('admin.dashboard') }}" class="block bg-red-600 hover:bg-red-700 text-white text-sm font-semibold py-3 px-6 rounded-full transition duration-300 shadow-md w-full text-center">
-                    <i class="fa-solid fa-tachometer-alt mr-2"></i> Admin Dashboard
-                </a>
-                <form method="POST" action="{{ route('admin.logout') }}">
                     @csrf
                     <button type="submit" class="w-full bg-red-500 hover:bg-red-600 text-white text-sm font-semibold py-3 px-6 rounded-full transition duration-300 shadow-md">
                         <i class="fa-solid fa-sign-out-alt mr-2"></i> Logout

@@ -11,13 +11,52 @@ class NotificationController extends Controller
 {
     public function index()
     {
-        $notifications = Auth::user()->notifications()
+        $admin = Auth::guard('admin')->user();
+
+        $notifications = $admin->notifications()
             ->latest()
             ->paginate(20);
 
-        $unreadCount = Auth::user()->unreadNotifications()->count();
-        $totalCount = Auth::user()->notifications()->count();
+        $unreadCount = $admin->unreadNotifications()->count();
+        $totalCount = $admin->notifications()->count();
 
         return view('Admin.Notifications.notifications', compact('notifications', 'unreadCount', 'totalCount'));
+    }
+
+    public function markAsRead(Notification $notification)
+    {
+        if ($notification->user_id !== Auth::guard('admin')->id()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $notification->markAsRead();
+
+        return response()->json(['message' => 'Notification marked as read']);
+    }
+
+    public function markAllAsRead()
+    {
+        Auth::guard('admin')->user()->notifications()
+            ->unread()
+            ->update(['is_read' => true, 'read_at' => now()]);
+
+        return response()->json(['message' => 'All notifications marked as read']);
+    }
+
+    public function unreadCount()
+    {
+        $count = Auth::guard('admin')->user()->unreadNotifications()->count();
+
+        return response()->json(['unread_count' => $count]);
+    }
+
+    public function recent()
+    {
+        $notifications = Auth::guard('admin')->user()->notifications()
+            ->latest()
+            ->take(5)
+            ->get();
+
+        return response()->json($notifications);
     }
 }

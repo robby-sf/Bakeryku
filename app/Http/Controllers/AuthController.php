@@ -11,17 +11,11 @@ class AuthController extends Controller
 {
     public function showLogin()
     {
-        // If already logged in as a user, redirect to dashboard
+        // If already logged in as a user, keep them on the public home page.
         if (Auth::guard('user')->check() && Auth::guard('user')->user()->role === 'user') {
-            return redirect()->route('dashboard');
+            return redirect()->route('landing_page');
         }
-        
-        // If logged in as admin, logout gracefully
-        if (Auth::guard('admin')->check() && Auth::guard('admin')->user()->role === 'admin') {
-            Auth::guard('admin')->logout();
-            return redirect()->route('login')->with('info', 'Silakan login sebagai pengguna untuk akses ke fitur user.');
-        }
-        
+
         return view('Auth.login');
     }
 
@@ -40,7 +34,7 @@ class AuthController extends Controller
 
         if (Auth::guard('user')->attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
-            return redirect()->intended(route('dashboard'));
+            return redirect()->route('landing_page')->with('success', 'Login berhasil.');
         }
 
         return back()->withErrors([
@@ -50,17 +44,11 @@ class AuthController extends Controller
 
     public function showRegister()
     {
-        // If already logged in as a user, redirect to dashboard
+        // If already logged in as a user, keep them on the public home page.
         if (Auth::guard('user')->check() && Auth::guard('user')->user()->role === 'user') {
-            return redirect()->route('dashboard');
+            return redirect()->route('landing_page');
         }
-        
-        // If logged in as admin, logout gracefully
-        if (Auth::guard('admin')->check() && Auth::guard('admin')->user()->role === 'admin') {
-            Auth::guard('admin')->logout();
-            return redirect()->route('register')->with('info', 'Silakan daftar atau login sebagai pengguna.');
-        }
-        
+
         return view('Auth.register');
     }
 
@@ -97,9 +85,6 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         Auth::guard('user')->logout();
-
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
 
         return redirect('/')->with('success', 'Logout berhasil.');
     }

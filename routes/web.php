@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\PromoController;
 use App\Http\Controllers\Admin\ReviewController as AdminReviewController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
@@ -41,7 +42,7 @@ Route::prefix('admin/auth')->name('admin.')->group(function () {
     Route::post('/login', [AdminAuthController::class, 'login'])->name('login.post');
     Route::get('/register', [AdminAuthController::class, 'showRegister'])->name('register');
     Route::post('/register', [AdminAuthController::class, 'register'])->name('register.post');
-    Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
+    Route::match(['GET', 'POST'], '/logout', [AdminAuthController::class, 'logout'])->name('logout');
 });
 
 // Normal user authentication - allow non-user roles (admins) to access login
@@ -51,11 +52,7 @@ Route::get('/register', [AuthController::class, 'showRegister'])->name('register
 Route::post('/register', [AuthController::class, 'register'])->name('register.post');
 
 
-Route::get('/logout', function () {
-    return redirect('/')->with('info', 'Silakan keluar menggunakan tombol logout.');
-});
-
-Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
+Route::match(['GET', 'POST'], '/logout', [AuthController::class, 'logout'])->name('logout');
 
 // User-only routes (requires authentication and user role)
 Route::middleware(['user'])->group(function () {
@@ -117,18 +114,22 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     Route::put('/settings', [SettingsController::class, 'update'])->name('settings.update');
     
     Route::get('/notifications', [AdminNotificationController::class, 'index'])->name('notifications');
+    Route::post('/notifications/{notification}/read', [AdminNotificationController::class, 'markAsRead'])->name('notifications.mark-read');
+    Route::post('/notifications/mark-all-read', [AdminNotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');
+    Route::get('/notifications/unread-count', [AdminNotificationController::class, 'unreadCount'])->name('notifications.unread-count');
+    Route::get('/notifications/recent', [AdminNotificationController::class, 'recent'])->name('notifications.recent');
     Route::get('/activities', function () {return view('Admin.Activities.activities');})->name('activities');
     
-    // Promo routes
-    Route::get('/promos', function () {return view('Admin.Promo.promos');})->name('promos');
-    Route::get('/promos/add', function () {return view('Admin.Promo.add_promos');})->name('promos.add');
+    // Promo CRUD routes
+    Route::get('/promos', [PromoController::class, 'index'])->name('promos');
+    Route::get('/promos/add', [PromoController::class, 'create'])->name('promos.add');
+    Route::post('/promos', [PromoController::class, 'store'])->name('promos.store');
+    Route::get('/promos/{promo}/edit', [PromoController::class, 'edit'])->name('promos.edit');
+    Route::put('/promos/{promo}', [PromoController::class, 'update'])->name('promos.update');
+    Route::delete('/promos/{promo}', [PromoController::class, 'destroy'])->name('promos.destroy');
     
     // Profile routes
     Route::get('/profile', [AdminProfileController::class, 'show'])->name('profile');
     Route::post('/profile/update', [AdminProfileController::class, 'updateProfile'])->name('profile.update');
     Route::post('/profile/password', [AdminProfileController::class, 'updatePassword'])->name('profile.password');
-});
-
-Route::get('/admin/auth/logout', function () {
-    return redirect()->route('admin.login')->with('info', 'Silakan gunakan tombol logout untuk keluar dari akun admin.');
 });

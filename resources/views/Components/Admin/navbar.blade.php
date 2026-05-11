@@ -155,9 +155,10 @@
         const profileBtn = document.getElementById('profile-btn');
         const profileMenu = document.getElementById('profile-menu');
 
-        const unreadCountUrl = '{{ route('notifications.unread-count') }}';
-        const recentNotificationsUrl = '{{ route('notifications.recent') }}';
-        const markAllReadUrl = '{{ route('notifications.mark-all-read') }}';
+        const unreadCountUrl = '{{ route('admin.notifications.unread-count') }}';
+        const recentNotificationsUrl = '{{ route('admin.notifications.recent') }}';
+        const markAllReadUrl = '{{ route('admin.notifications.mark-all-read') }}';
+        const markReadUrlTemplate = '{{ route('admin.notifications.mark-read', ['notification' => '__ID__']) }}';
 
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
@@ -214,7 +215,7 @@
         const markSelectedNotificationAsRead = async (id) => {
             if (!csrfToken) return;
             try {
-                await fetch(`/notifications/${id}/read`, {
+                await fetch(markReadUrlTemplate.replace('__ID__', id), {
                     method: 'POST',
                     headers: {
                         Accept: 'application/json',

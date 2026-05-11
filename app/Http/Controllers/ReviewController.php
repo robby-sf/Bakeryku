@@ -22,7 +22,7 @@ class ReviewController extends Controller
             'comment' => ['nullable', 'string', 'max:1000'],
         ]);
 
-        $userId = Auth::id();
+        $userId = Auth::guard('user')->id();
 
         // Check if user already has a pending review for this product
         $existingReview = Review::where('user_id', $userId)
@@ -59,7 +59,7 @@ class ReviewController extends Controller
     public function update(Request $request, Review $review)
     {
         // Check authorization
-        if ($review->user_id !== Auth::id()) {
+        if ($review->user_id !== Auth::guard('user')->id()) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
@@ -84,7 +84,7 @@ class ReviewController extends Controller
     public function destroy(Review $review)
     {
         // Check authorization
-        if ($review->user_id !== Auth::id()) {
+        if ($review->user_id !== Auth::guard('user')->id()) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 

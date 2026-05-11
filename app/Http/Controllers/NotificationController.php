@@ -13,7 +13,7 @@ class NotificationController extends Controller
      */
     public function index()
     {
-        $notifications = Auth::user()->notifications()
+        $notifications = Auth::guard('user')->user()->notifications()
             ->latest()
             ->paginate(20);
 
@@ -25,7 +25,7 @@ class NotificationController extends Controller
      */
     public function markAsRead(Notification $notification)
     {
-        if ($notification->user_id !== Auth::id()) {
+        if ($notification->user_id !== Auth::guard('user')->id()) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
@@ -39,7 +39,7 @@ class NotificationController extends Controller
      */
     public function markAllAsRead()
     {
-        Auth::user()->notifications()
+        Auth::guard('user')->user()->notifications()
             ->unread()
             ->update(['is_read' => true, 'read_at' => now()]);
 
@@ -51,7 +51,7 @@ class NotificationController extends Controller
      */
     public function destroy(Notification $notification)
     {
-        if ($notification->user_id !== Auth::id()) {
+        if ($notification->user_id !== Auth::guard('user')->id()) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
@@ -65,7 +65,7 @@ class NotificationController extends Controller
      */
     public function unreadCount()
     {
-        $count = Auth::user()->unreadNotifications()->count();
+        $count = Auth::guard('user')->user()->unreadNotifications()->count();
 
         return response()->json(['unread_count' => $count]);
     }
@@ -75,7 +75,7 @@ class NotificationController extends Controller
      */
     public function recent()
     {
-        $notifications = Auth::user()->notifications()
+        $notifications = Auth::guard('user')->user()->notifications()
             ->latest()
             ->take(5)
             ->get();
