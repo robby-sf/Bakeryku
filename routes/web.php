@@ -14,12 +14,25 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\NotificationController;
 use App\Models\Product;
+use App\Models\Promo;
 use App\Models\Review;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 
 // Public pages
-Route::get('/', function () {return view('landing_page');})->name('landing_page');
+Route::get('/', function () {
+    try {
+        $promos = Promo::active()->latest()->take(3)->get();
+    } catch (\Throwable $e) {
+        $promos = collect();
+    }
+
+    $settings = Cache::get('app_settings', []);
+    $waNumber = $settings['wa_number'] ?? '+62 812 1314 1500';
+
+    return view('landing_page', compact('promos', 'waNumber'));
+})->name('landing_page');
 Route::get('/menu', function () {
     $products = Product::where('status', 'Tersedia')->get();
     $categories = collect(['Pastry', 'Bread', 'Cakes', 'Chocolate', 'Assorted']);
@@ -33,7 +46,18 @@ Route::get('/menu', function () {
     return view('Menu.menu_list', compact('products', 'categories', 'categoryMap'));
 })->name('menu');
 Route::get('/stores', function () {return view('Store.store');})->name('store');
-Route::get('/promo', function () {return view('Promo.promo');})->name('promo');
+Route::get('/promo', function () {
+    try {
+        $promos = Promo::active()->latest()->get();
+    } catch (\Throwable $e) {
+        $promos = collect();
+    }
+
+    $settings = Cache::get('app_settings', []);
+    $waNumber = $settings['wa_number'] ?? '+62 812 1314 1500';
+
+    return view('Promo.promo', compact('promos', 'waNumber'));
+})->name('promo');
 Route::get('/menu/view/{product}', [\App\Http\Controllers\MenuController::class, 'show'])->name('menu_view');
 
 // Admin authentication
