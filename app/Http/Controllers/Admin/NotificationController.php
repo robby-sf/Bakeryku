@@ -26,12 +26,23 @@ class NotificationController extends Controller
     public function markAsRead(Notification $notification)
     {
         if ($notification->user_id !== Auth::guard('admin')->id()) {
-            return response()->json(['message' => 'Unauthorized'], 403);
+            if (request()->expectsJson()) {
+                return response()->json(['message' => 'Unauthorized'], 403);
+            }
+
+            abort(403);
         }
 
         $notification->markAsRead();
 
-        return response()->json(['message' => 'Notification marked as read']);
+        if (request()->expectsJson()) {
+            return response()->json([
+                'message' => 'Notification marked as read',
+                'unread_count' => Auth::guard('admin')->user()->unreadNotifications()->count(),
+            ]);
+        }
+
+        return back()->with('success', 'Notifikasi ditandai sudah dibaca.');
     }
 
     public function markAllAsRead()
@@ -40,7 +51,14 @@ class NotificationController extends Controller
             ->unread()
             ->update(['is_read' => true, 'read_at' => now()]);
 
-        return response()->json(['message' => 'All notifications marked as read']);
+        if (request()->expectsJson()) {
+            return response()->json([
+                'message' => 'All notifications marked as read',
+                'unread_count' => 0,
+            ]);
+        }
+
+        return back()->with('success', 'Semua notifikasi ditandai sudah dibaca.');
     }
 
     public function unreadCount()

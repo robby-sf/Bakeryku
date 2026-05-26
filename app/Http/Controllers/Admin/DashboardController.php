@@ -179,7 +179,7 @@ class DashboardController extends Controller
             'date' => $order->created_at,
         ]);
 
-        return $reviews
+        return collect($reviews)
             ->merge($users)
             ->merge($products)
             ->merge($orders)
