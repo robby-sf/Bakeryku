@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\PromoController;
 use App\Http\Controllers\Admin\ReviewController as AdminReviewController;
@@ -14,12 +15,24 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\NotificationController;
 use App\Models\Product;
-use App\Models\Review;
+use App\Models\Promo;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 
 // Public pages
-Route::get('/', function () {return view('landing_page');})->name('landing_page');
+Route::get('/', function () {
+    try {
+        $promos = Promo::active()->latest()->take(3)->get();
+    } catch (\Throwable $e) {
+        $promos = collect();
+    }
+
+    $settings = Cache::get('app_settings', []);
+    $waNumber = $settings['wa_number'] ?? '+62 812 1314 1500';
+
+    return view('landing_page', compact('promos', 'waNumber'));
+})->name('landing_page');
 Route::get('/menu', function () {
     $products = Product::where('status', 'Tersedia')->get();
     $categories = collect(['Pastry', 'Bread', 'Cakes', 'Chocolate', 'Assorted']);
@@ -33,7 +46,18 @@ Route::get('/menu', function () {
     return view('Menu.menu_list', compact('products', 'categories', 'categoryMap'));
 })->name('menu');
 Route::get('/stores', function () {return view('Store.store');})->name('store');
-Route::get('/promo', function () {return view('Promo.promo');})->name('promo');
+Route::get('/promo', function () {
+    try {
+        $promos = Promo::active()->latest()->get();
+    } catch (\Throwable $e) {
+        $promos = collect();
+    }
+
+    $settings = Cache::get('app_settings', []);
+    $waNumber = $settings['wa_number'] ?? '+62 812 1314 1500';
+
+    return view('Promo.promo', compact('promos', 'waNumber'));
+})->name('promo');
 Route::get('/menu/view/{product}', [\App\Http\Controllers\MenuController::class, 'show'])->name('menu_view');
 
 // Admin authentication
@@ -86,13 +110,7 @@ Route::middleware(['user'])->group(function () {
 
 // Admin protected routes (requires auth+admin role)
 Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/', function () {
-        $totalProducts = Product::count();
-        $totalReviews = Review::count();
-        $averageRating = Review::avg('rating') ? round(Review::avg('rating'), 1) : 0;
-
-        return view('Admin.Dashboard.dashboard', compact('totalProducts', 'totalReviews', 'averageRating'));
-    })->name('dashboard');
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/dashboard', function () {
         return redirect()->route('admin.dashboard');

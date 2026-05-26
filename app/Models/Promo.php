@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class Promo extends Model
@@ -23,6 +24,14 @@ class Promo extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
+
+    public function scopeActive(Builder $query): Builder
+    {
+        $today = now()->toDateString();
+
+        return $query->whereDate('start_date', '<=', $today)
+            ->whereDate('end_date', '>=', $today);
+    }
 
     public function getStatusAttribute(): string
     {
@@ -63,5 +72,26 @@ class Promo extends Model
         }
 
         return $this->value ? (string) $this->value : '-';
+    }
+
+    public function getDisplayValueAttribute(): string
+    {
+        return match ($this->type) {
+            'discount_percent', 'discount_nominal' => $this->value_label,
+            'buy_1_get_1' => 'Buy 1 Get 1',
+            'buy_2_get_1' => 'Buy 2 Get 1',
+            'free_shipping' => 'Gratis Ongkir',
+            'bundle' => 'Paket Bundel',
+            default => 'Promo Spesial',
+        };
+    }
+
+    public function getBadgeLabelAttribute(): string
+    {
+        return match ($this->type) {
+            'buy_1_get_1' => 'Buy 1 Get 1 Free',
+            'buy_2_get_1' => 'Buy 2 Get 1',
+            default => $this->type_label,
+        };
     }
 }
