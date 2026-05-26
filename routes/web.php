@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\PromoController;
 use App\Http\Controllers\Admin\ReviewController as AdminReviewController;
@@ -15,7 +16,6 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\NotificationController;
 use App\Models\Product;
 use App\Models\Promo;
-use App\Models\Review;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
@@ -110,13 +110,7 @@ Route::middleware(['user'])->group(function () {
 
 // Admin protected routes (requires auth+admin role)
 Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/', function () {
-        $totalProducts = Product::count();
-        $totalReviews = Review::count();
-        $averageRating = Review::avg('rating') ? round(Review::avg('rating'), 1) : 0;
-
-        return view('Admin.Dashboard.dashboard', compact('totalProducts', 'totalReviews', 'averageRating'));
-    })->name('dashboard');
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/dashboard', function () {
         return redirect()->route('admin.dashboard');
