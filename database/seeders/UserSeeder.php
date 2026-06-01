@@ -14,7 +14,7 @@ class UserSeeder extends Seeder
             [
                 'name' => 'Bakeryku Admin',
                 'email' => 'admin@bakeryku.test',
-                'password' => Hash::make('password'),
+                'password' => Hash::make('password'), //password is the admin password
                 'role' => 'admin',
                 'phone' => '+6281213141500',
                 'address' => 'Jl. Bakeryku No. 1, Jakarta',
