@@ -23,8 +23,8 @@
                     <div class="relative">
                         <button id="notif-btn" class="relative p-2 text-white hover:text-gray-200 transition focus:outline-none">
                             <i class="fa-regular fa-bell text-xl"></i>
-                            <span id="notif-badge" class="absolute top-1 right-1 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-[#DE5B6D] text-[10px] font-bold text-white shadow-sm border border-[#855333]">
-                                {{ $unreadNotificationsCount > 0 ? $unreadNotificationsCount : '0' }}
+                            <span id="notif-badge" class="{{ $unreadNotificationsCount > 0 ? 'flex' : 'hidden' }} absolute top-1 right-1 h-4 min-w-[1rem] items-center justify-center rounded-full bg-[#DE5B6D] px-1 text-[10px] font-bold leading-none text-white shadow-sm border border-[#855333]">
+                                {{ $unreadNotificationsCount > 99 ? '99+' : $unreadNotificationsCount }}
                             </span>
                         </button>
 
@@ -32,9 +32,9 @@
                             <div class="bg-[#FAF8F5] px-4 py-3 border-b border-[#EAE2D6] flex justify-between items-center">
                                 <div>
                                     <span class="font-bold text-[#452A1B] text-sm">Notifikasi</span>
-                                    <p class="text-xs text-gray-500">{{ $unreadNotificationsCount }} belum dibaca</p>
+                                    <p id="notif-unread-label" class="text-xs text-gray-500">{{ $unreadNotificationsCount }} belum dibaca</p>
                                 </div>
-                                <button id="notif-mark-all-btn" class="text-xs font-bold text-[#855333] hover:text-[#452A1B] transition">Tandai Semua Dibaca</button>
+                                <button id="notif-mark-all-btn" class="{{ $unreadNotificationsCount > 0 ? '' : 'hidden' }} text-xs font-bold text-[#855333] hover:text-[#452A1B] transition">Tandai Semua Dibaca</button>
                             </div>
 
                             <div id="notif-list" class="max-h-72 overflow-y-auto">
@@ -151,6 +151,7 @@
         const notifMenu = document.getElementById('notif-menu');
         const notifList = document.getElementById('notif-list');
         const notifBadge = document.getElementById('notif-badge');
+        const notifUnreadLabel = document.getElementById('notif-unread-label');
         const markAllBtn = document.getElementById('notif-mark-all-btn');
         const profileBtn = document.getElementById('profile-btn');
         const profileMenu = document.getElementById('profile-menu');
@@ -162,9 +163,29 @@
 
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
+        const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;',
+        }[char]));
+
         const updateBadge = (count) => {
+            count = Number(count) || 0;
+
+            if (notifUnreadLabel) {
+                notifUnreadLabel.textContent = `${count} belum dibaca`;
+            }
+
+            if (markAllBtn) {
+                markAllBtn.classList.toggle('hidden', count === 0);
+            }
+
             if (!notifBadge) return;
-            notifBadge.textContent = count > 0 ? count : '0';
+            notifBadge.textContent = count > 99 ? '99+' : count;
+            notifBadge.classList.toggle('hidden', count === 0);
+            notifBadge.classList.toggle('flex', count > 0);
         };
 
         const renderNotifications = (notifications) => {
@@ -182,10 +203,10 @@
                 return `
                     <button data-id="${notification.id}" class="notif-item w-full text-left block px-4 py-3 hover:bg-[#FAF8F5] border-b border-gray-50 transition group ${readClass}">
                         <div class="flex justify-between items-start gap-3">
-                            <p class="text-sm text-[#452A1B] font-medium group-hover:text-[#855333]">${notification.title}</p>
+                            <p class="text-sm text-[#452A1B] font-medium group-hover:text-[#855333]">${escapeHtml(notification.title)}</p>
                             <span class="text-[10px] text-gray-400">${time}</span>
                         </div>
-                        <p class="text-xs text-gray-500 mt-1 line-clamp-3">${notification.message}</p>
+                        <p class="text-xs text-gray-500 mt-1 line-clamp-3">${escapeHtml(notification.message)}</p>
                         ${badge}
                     </button>
                 `;

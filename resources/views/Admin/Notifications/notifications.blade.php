@@ -7,13 +7,15 @@
 @section('header_subtitle', 'Pantau semua aktivitas toko, dan pemberitahuan sistem.')
 
 @section('header_actions')
-    <form method="POST" action="{{ route('notifications.mark-all-read') }}">
-        @csrf
-        <button type="submit" class="bg-white border border-[#EAE2D6] text-[#855333] hover:bg-[#FAF8F5] px-4 py-2.5 rounded-lg text-sm font-bold transition shadow-sm flex items-center gap-2">
-            <i class="fa-solid fa-check-double"></i>
-            <span class="hidden sm:inline">Tandai Semua Dibaca</span>
-        </button>
-    </form>
+    @if($unreadCount > 0)
+        <form method="POST" action="{{ route('admin.notifications.mark-all-read') }}">
+            @csrf
+            <button type="submit" class="bg-white border border-[#EAE2D6] text-[#855333] hover:bg-[#FAF8F5] px-4 py-2.5 rounded-lg text-sm font-bold transition shadow-sm flex items-center gap-2">
+                <i class="fa-solid fa-check-double"></i>
+                <span class="hidden sm:inline">Tandai Semua Dibaca</span>
+            </button>
+        </form>
+    @endif
 @endsection
 
 @section('content')
@@ -23,7 +25,10 @@
             Semua <span class="bg-white/20 px-2 py-0.5 rounded-full text-[10px]">{{ $totalCount }}</span>
         </button>
         <button class="flex items-center gap-2 px-5 py-2.5 bg-white border border-[#EAE2D6] text-[#452A1B] hover:bg-[#FAF8F5] rounded-lg text-sm font-medium transition shadow-sm">
-            Belum Dibaca <span class="bg-[#DE5B6D] text-white px-2 py-0.5 rounded-full text-[10px]">{{ $unreadCount }}</span>
+            Belum Dibaca
+            @if($unreadCount > 0)
+                <span class="bg-[#DE5B6D] text-white px-2 py-0.5 rounded-full text-[10px]">{{ $unreadCount }}</span>
+            @endif
         </button>
         <button class="flex items-center gap-2 px-5 py-2.5 bg-white border border-[#EAE2D6] text-[#452A1B] hover:bg-[#FAF8F5] rounded-lg text-sm font-medium transition shadow-sm">
             Pesanan
@@ -61,8 +66,10 @@
                     }
                 @endphp
 
-                <div class="p-5 flex gap-4 items-start bg-[#FAF8F5] hover:bg-[#EAE2D6]/40 transition cursor-pointer group relative">
-                    <div class="absolute top-1/2 -translate-y-1/2 left-3 w-2 h-2 rounded-full {{ $indicator }}"></div>
+                <div class="p-5 flex gap-4 items-start {{ $notification->is_read ? 'bg-white' : 'bg-[#FAF8F5]' }} hover:bg-[#EAE2D6]/40 transition cursor-pointer group relative">
+                    @if(!$notification->is_read)
+                        <div class="absolute top-1/2 -translate-y-1/2 left-3 w-2 h-2 rounded-full {{ $indicator }}"></div>
+                    @endif
                     <div class="w-12 h-12 rounded-full {{ $iconBg }} flex flex-shrink-0 items-center justify-center text-lg border ml-3">
                         <i class="fa-solid {{ $icon }}"></i>
                     </div>
