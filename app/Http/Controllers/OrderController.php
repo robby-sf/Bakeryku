@@ -27,7 +27,8 @@ class OrderController extends Controller
 
         $quantity = $validated['quantity'];
         $totalPrice = $product->price * $quantity;
-        $waNumber = Cache::get('app_settings.wa_number', '+628123141500');
+        $settings = Cache::get('app_settings', []);
+        $waNumber = $settings['wa_number'] ?? '+6285602385989';
         $cleanNumber = preg_replace('/[^0-9]/', '', $waNumber);
         if (str_starts_with($cleanNumber, '0')) {
             $cleanNumber = '62'.ltrim($cleanNumber, '0');
@@ -48,6 +49,8 @@ class OrderController extends Controller
             'whatsapp_message' => rawurldecode($message),
             'status' => 'pending',
         ]);
+
+        \App\Models\ActivityLog::log('order', 'Pesanan WhatsApp dibuat', "Pengguna {$user->name} memesan {$product->name} sebanyak {$quantity} pcs dengan total Rp " . number_format($totalPrice, 0, ',', '.') . ".", $user->id);
 
         $whatsappUrl = 'https://wa.me/' . $cleanNumber . '?text=' . $message;
 

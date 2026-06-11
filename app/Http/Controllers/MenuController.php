@@ -13,7 +13,7 @@ class MenuController extends Controller
      */
     public function show(Product $product)
     {
-        $reviews = $product->approvedReviews()->latest()->paginate(10);
+        $reviews = $product->publishedReviews()->latest()->paginate(10);
         $averageRating = $product->averageRating();
         $reviewCount = $product->reviewCount();
         $isFavorited = false;

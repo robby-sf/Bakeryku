@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use App\Models\Favorite;
 use App\Models\Order;
 use App\Models\PageVisit;
@@ -24,7 +25,7 @@ class DashboardController extends Controller
 
         $totalProducts = Product::count();
         $totalReviews = Review::count();
-        $averageRating = round((float) Review::approved()->avg('rating'), 1);
+        $averageRating = round((float) Review::published()->avg('rating'), 1);
         $totalVisits = $this->uniqueVisitors();
 
         $productGrowth = Product::where('created_at', '>=', $startOfMonth)->count();
@@ -105,10 +106,12 @@ class DashboardController extends Controller
             $reviews = Review::whereBetween('created_at', [$start, $end])->count();
             $favorites = Favorite::whereBetween('created_at', [$start, $end])->count();
             $orders = Order::whereBetween('created_at', [$start, $end])->count();
+            $logins = ActivityLog::where('type', 'user_login')->whereBetween('created_at', [$start, $end])->count();
+            $registrations = ActivityLog::where('type', 'user_register')->whereBetween('created_at', [$start, $end])->count();
 
             return [
                 'label' => $weeksAgo === 0 ? 'Minggu Ini' : $start->translatedFormat('d M') . ' - ' . $end->translatedFormat('d M'),
-                'total' => $visits + $reviews + $favorites + $orders,
+                'total' => $visits + $reviews + $favorites + $orders + $logins + $registrations,
             ];
         });
 
@@ -126,7 +129,7 @@ class DashboardController extends Controller
             ->leftJoin('page_visits', 'products.id', '=', 'page_visits.product_id')
             ->leftJoin('reviews', function ($join) {
                 $join->on('products.id', '=', 'reviews.product_id')
-                    ->where('reviews.status', '=', 'approved');
+                    ->where('reviews.status', '=', 'published');
             })
             ->select([
                 'products.id',

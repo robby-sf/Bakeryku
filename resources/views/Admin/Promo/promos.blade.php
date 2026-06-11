@@ -136,7 +136,7 @@
                 <span>Menampilkan 0 promos.</span>
             @endif
             @if ($promos->hasPages())
-                <div>{{ $promos->links() }}</div>
+                <div class="admin-pagination">{{ $promos->links() }}</div>
             @endif
         </div>
     </div>

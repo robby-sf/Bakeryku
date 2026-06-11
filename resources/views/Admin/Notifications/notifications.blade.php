@@ -47,13 +47,12 @@
                     $indicator = 'bg-[#DE5B6D]';
                     $buttonColor = 'text-blue-600 hover:text-blue-800';
 
-                    if ($notification->type === 'review_approved' || $notification->type === 'review') {
+                    if ($notification->type === 'review' || str_starts_with($notification->type, 'review_')) {
                         $icon = 'fa-star';
                         $iconBg = 'bg-yellow-50 text-yellow-500 border-yellow-100';
-                    } elseif ($notification->type === 'review_rejected') {
-                        $icon = 'fa-triangle-exclamation';
-                        $iconBg = 'bg-red-50 text-red-500 border-red-100';
-                        $buttonColor = 'text-red-600 hover:text-red-800';
+                    } elseif ($notification->type === 'admin_response') {
+                        $icon = 'fa-reply';
+                        $iconBg = 'bg-blue-50 text-blue-500 border-blue-100';
                     } elseif ($notification->type === 'system') {
                         $icon = 'fa-gear';
                         $iconBg = 'bg-gray-100 text-gray-500 border-gray-200';

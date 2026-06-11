@@ -9,51 +9,51 @@
 @section('content')
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div class="bg-white rounded-2xl p-6 shadow-sm border border-[#EAE2D6] flex justify-between items-start transition hover:shadow-md">
+        <a href="{{ route('admin.products.index') }}" class="bg-white rounded-2xl p-6 shadow-sm border border-[#EAE2D6] flex justify-between items-start transition hover:shadow-md hover:border-[#855333]/30 group">
             <div>
                 <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Total Menu</p>
-                <h3 class="font-heading text-3xl font-bold text-[#452A1B]">{{ number_format($totalProducts) }}</h3>
+                <h3 class="font-heading text-3xl font-bold text-[#452A1B] group-hover:text-[#BA8E60] transition-colors">{{ number_format($totalProducts) }}</h3>
                 <p class="text-[10px] text-gray-400 mt-2 font-medium">+{{ number_format($productGrowth) }} bulan ini</p>
             </div>
-            <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center text-xl shadow-sm border border-blue-100">
+            <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center text-xl shadow-sm border border-blue-100 group-hover:scale-105 transition-transform">
                 <i class="fa-solid fa-box-open"></i>
             </div>
-        </div>
+        </a>
 
-        <div class="bg-white rounded-2xl p-6 shadow-sm border border-[#EAE2D6] flex justify-between items-start transition hover:shadow-md">
+        <a href="{{ route('admin.reviews.index') }}" class="bg-white rounded-2xl p-6 shadow-sm border border-[#EAE2D6] flex justify-between items-start transition hover:shadow-md hover:border-[#855333]/30 group">
             <div>
                 <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Total Ulasan</p>
-                <h3 class="font-heading text-3xl font-bold text-[#452A1B]">{{ number_format($totalReviews) }}</h3>
+                <h3 class="font-heading text-3xl font-bold text-[#452A1B] group-hover:text-[#BA8E60] transition-colors">{{ number_format($totalReviews) }}</h3>
                 <p class="text-[10px] text-gray-400 mt-2 font-medium">+{{ number_format($reviewGrowth) }} bulan ini</p>
             </div>
-            <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-500 flex items-center justify-center text-xl shadow-sm border border-emerald-100">
+            <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-500 flex items-center justify-center text-xl shadow-sm border border-emerald-100 group-hover:scale-105 transition-transform">
                 <i class="fa-regular fa-comment-dots"></i>
             </div>
-        </div>
+        </a>
 
-        <div class="bg-[#FCFAFC] rounded-2xl p-6 shadow-sm border-2 border-[#855333]/20 flex justify-between items-start transition hover:shadow-md">
+        <a href="{{ route('admin.reviews.index') }}" class="bg-[#FCFAFC] rounded-2xl p-6 shadow-sm border-2 border-[#855333]/20 flex justify-between items-start transition hover:shadow-md hover:border-[#855333]/40 group">
             <div>
                 <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Rata-rata Rating</p>
-                <h3 class="font-heading text-3xl font-bold text-[#452A1B]">{{ number_format($averageRating, 1) }}</h3>
+                <h3 class="font-heading text-3xl font-bold text-[#452A1B] group-hover:text-[#BA8E60] transition-colors">{{ number_format($averageRating, 1) }}</h3>
                 <p class="text-[10px] text-[#BA8E60] font-bold mt-2 flex items-center gap-1">
                     <i class="fa-solid fa-star"></i> {{ $ratingStatus }}
                 </p>
             </div>
-            <div class="w-12 h-12 rounded-xl bg-yellow-50 text-yellow-500 flex items-center justify-center text-xl shadow-sm border border-yellow-100">
+            <div class="w-12 h-12 rounded-xl bg-yellow-50 text-yellow-500 flex items-center justify-center text-xl shadow-sm border border-yellow-100 group-hover:scale-105 transition-transform">
                 <i class="fa-regular fa-star"></i>
             </div>
-        </div>
+        </a>
 
-        <div class="bg-white rounded-2xl p-6 shadow-sm border border-[#EAE2D6] flex justify-between items-start transition hover:shadow-md">
+        <a href="{{ route('admin.activities') }}" class="bg-white rounded-2xl p-6 shadow-sm border border-[#EAE2D6] flex justify-between items-start transition hover:shadow-md hover:border-[#855333]/30 group">
             <div>
                 <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Kunjungan Web</p>
-                <h3 class="font-heading text-3xl font-bold text-[#452A1B]">{{ number_format($totalVisits) }}</h3>
+                <h3 class="font-heading text-3xl font-bold text-[#452A1B] group-hover:text-[#BA8E60] transition-colors">{{ number_format($totalVisits) }}</h3>
                 <p class="text-[10px] {{ $visitGrowth > 0 ? 'text-[#BA8E60]' : 'text-gray-400' }} font-medium mt-2">{{ $visitStatus }}</p>
             </div>
-            <div class="w-12 h-12 rounded-xl bg-orange-50 text-orange-500 flex items-center justify-center text-xl shadow-sm border border-orange-100">
+            <div class="w-12 h-12 rounded-xl bg-orange-50 text-orange-500 flex items-center justify-center text-xl shadow-sm border border-orange-100 group-hover:scale-105 transition-transform">
                 <i class="fa-solid fa-arrow-trend-up"></i>
             </div>
-        </div>
+        </a>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">

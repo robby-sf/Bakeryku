@@ -63,7 +63,7 @@
 
                 <div>
                     <label for="phone" class="block text-sm font-bold text-[#855333] mb-2">Phone Number</label>
-                    <input type="text" id="phone" name="phone" value="{{ old('phone', $settings['phone'] ?? '081234567890') }}" 
+                    <input type="text" id="phone" name="phone" value="{{ old('phone', $settings['phone'] ?? '085602385989') }}" 
                         class="w-full bg-[#FAF8F5] border border-[#EAE2D6] rounded-xl px-4 py-3 text-sm text-[#452A1B] font-medium focus:outline-none focus:border-[#BA8E60] focus:ring-1 focus:ring-[#BA8E60] transition-colors @error('phone') border-red-500 @enderror">
                     @error('phone')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
                 </div>
@@ -99,7 +99,7 @@
 
             <div class="mb-6">
                 <label for="wa_number" class="block text-sm font-bold text-[#855333] mb-2">WhatsApp Recipient Number</label>
-                <input type="text" id="wa_number" name="wa_number" value="{{ old('wa_number', $settings['wa_number'] ?? '+62 812 1314 1500') }}" 
+                <input type="text" id="wa_number" name="wa_number" value="{{ old('wa_number', $settings['wa_number'] ?? '+62 856 0238 5989') }}" 
                     class="w-full bg-[#FAF8F5] border border-[#EAE2D6] rounded-xl px-4 py-3 text-sm text-[#452A1B] font-medium focus:outline-none focus:border-[#BA8E60] focus:ring-1 focus:ring-[#BA8E60] transition-colors @error('wa_number') border-red-500 @enderror">
                 <p class="text-xs text-gray-500 mt-2">Gunakan kode negara (contoh: +62 untuk Indonesia). Nomor ini akan dihubungkan dengan tombol "Order Now" pada halaman promo.</p>
                 @error('wa_number')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror

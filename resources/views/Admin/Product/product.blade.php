@@ -148,7 +148,7 @@
                 <span class="font-bold text-[#452A1B]">{{ $products->lastItem() }}</span> dari 
                 <span class="font-bold text-[#452A1B]">{{ $products->total() }}</span> produk
             </p>
-            <div class="flex gap-2">
+            <div class="flex gap-2 admin-pagination">
                 {{ $products->links() }}
             </div>
         </div>

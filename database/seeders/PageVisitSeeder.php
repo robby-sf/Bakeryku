@@ -11,40 +11,83 @@ class PageVisitSeeder extends Seeder
 {
     public function run(): void
     {
-        $products = Product::where('status', 'Tersedia')->get()->keyBy('name');
-        $users = User::where('role', 'user')->get()->keyBy('email');
+        $products = Product::where('status', 'Tersedia')->get();
+        $users = User::where('role', 'user')->get();
 
-        $visits = [
-            ['visitor-demo-001', 'nadia@example.com', 'Butter Croissant', '/menu/view/1', 'menu_view', now()->subDays(20)],
-            ['visitor-demo-002', null, 'Butter Croissant', '/menu/view/1', 'menu_view', now()->subDays(18)],
-            ['visitor-demo-003', 'raka@example.com', 'Chocolate Danish', '/menu/view/2', 'menu_view', now()->subDays(12)],
-            ['visitor-demo-004', null, 'Strawberry Shortcake', '/menu/view/5', 'menu_view', now()->subDays(8)],
-            ['visitor-demo-005', 'sinta@example.com', 'Mini Donut Box', '/menu/view/7', 'menu_view', now()->subDays(5)],
-            ['visitor-demo-006', null, null, '/menu', 'menu', now()->subDays(3)],
-            ['visitor-demo-007', 'nadia@example.com', 'Roti Sobek Susu', '/menu/view/3', 'menu_view', now()->subDay()],
-            ['visitor-demo-008', null, null, '/promo', 'promo', now()],
-        ];
+        if ($products->isEmpty() || $users->isEmpty()) {
+            return;
+        }
 
-        foreach ($visits as [$visitorId, $email, $productName, $path, $routeName, $visitedAt]) {
-            $user = $email ? ($users[$email] ?? null) : null;
-            $product = $productName ? ($products[$productName] ?? null) : null;
+        $visitData = [];
 
-            PageVisit::updateOrCreate(
-                [
-                    'visitor_id' => $visitorId,
-                    'path' => $path,
-                    'visit_date' => $visitedAt->toDateString(),
-                ],
-                [
-                    'user_id' => $user?->id,
-                    'product_id' => $product?->id,
-                    'route_name' => $routeName,
-                    'ip_address' => '127.0.0.1',
-                    'user_agent' => 'Bakeryku Seeder',
-                    'created_at' => $visitedAt,
-                    'updated_at' => $visitedAt,
-                ]
-            );
+        // Week 3 ago: subDays 15 to 21 -> ~18 visits
+        for ($i = 0; $i < 18; $i++) {
+            $daysAgo = rand(15, 21);
+            $product = $products->random();
+            $visitData[] = [
+                'visitor_id' => 'visitor-w3-' . $i,
+                'user_id' => rand(0, 1) ? $users->random()->id : null,
+                'product_id' => $product->id,
+                'path' => '/menu/view/' . $product->id,
+                'route_name' => 'menu_view',
+                'created_at' => now()->subDays($daysAgo)->subHours(rand(0, 23))->subMinutes(rand(0, 59)),
+            ];
+        }
+
+        // Week 2 ago: subDays 8 to 14 -> ~22 visits
+        for ($i = 0; $i < 22; $i++) {
+            $daysAgo = rand(8, 14);
+            $product = $products->random();
+            $visitData[] = [
+                'visitor_id' => 'visitor-w2-' . $i,
+                'user_id' => rand(0, 1) ? $users->random()->id : null,
+                'product_id' => $product->id,
+                'path' => '/menu/view/' . $product->id,
+                'route_name' => 'menu_view',
+                'created_at' => now()->subDays($daysAgo)->subHours(rand(0, 23))->subMinutes(rand(0, 59)),
+            ];
+        }
+
+        // Week 1 ago: subDays 1 to 7 -> ~45 visits
+        for ($i = 0; $i < 45; $i++) {
+            $daysAgo = rand(1, 7);
+            $product = $products->random();
+            $visitData[] = [
+                'visitor_id' => 'visitor-w1-' . $i,
+                'user_id' => rand(0, 1) ? $users->random()->id : null,
+                'product_id' => $product->id,
+                'path' => '/menu/view/' . $product->id,
+                'route_name' => 'menu_view',
+                'created_at' => now()->subDays($daysAgo)->subHours(rand(0, 23))->subMinutes(rand(0, 59)),
+            ];
+        }
+
+        // This week: 0 days ago (or today) -> ~12 visits
+        for ($i = 0; $i < 12; $i++) {
+            $product = $products->random();
+            $visitData[] = [
+                'visitor_id' => 'visitor-w0-' . $i,
+                'user_id' => rand(0, 1) ? $users->random()->id : null,
+                'product_id' => $product->id,
+                'path' => '/menu/view/' . $product->id,
+                'route_name' => 'menu_view',
+                'created_at' => now()->subHours(rand(0, 12))->subMinutes(rand(0, 59)),
+            ];
+        }
+
+        foreach ($visitData as $data) {
+            PageVisit::create([
+                'visitor_id' => $data['visitor_id'],
+                'user_id' => $data['user_id'],
+                'product_id' => $data['product_id'],
+                'path' => $data['path'],
+                'route_name' => $data['route_name'],
+                'ip_address' => '127.0.0.1',
+                'user_agent' => 'Bakeryku Seeder',
+                'visit_date' => $data['created_at']->toDateString(),
+                'created_at' => $data['created_at'],
+                'updated_at' => $data['created_at'],
+            ]);
         }
     }
 }

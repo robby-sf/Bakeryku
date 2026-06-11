@@ -39,27 +39,18 @@ class Review extends Model
     }
 
     /**
-     * Scope for approved reviews
+     * Scope for published reviews (visible to public)
      */
-    public function scopeApproved($query)
+    public function scopePublished($query)
     {
-        return $query->where('status', 'approved');
+        return $query->where('status', 'published');
     }
 
     /**
-     * Scope for pending reviews
+     * Scope for hidden reviews (hidden by admin)
      */
-    public function scopePending($query)
+    public function scopeHidden($query)
     {
-        return $query->where('status', 'pending');
-    }
-
-    /**
-     * Scope for rejected reviews
-     */
-    public function scopeRejected($query)
-    {
-        return $query->where('status', 'rejected');
+        return $query->where('status', 'hidden');
     }
 }
-

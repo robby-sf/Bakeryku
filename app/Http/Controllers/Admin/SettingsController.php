@@ -13,17 +13,19 @@ class SettingsController extends Controller
      */
     public function show()
     {
-        $settings = Cache::rememberForever('app_settings', function () {
-            return [
+        if (!Cache::has('app_settings')) {
+            Cache::forever('app_settings', [
                 'store_name' => 'Slice Bread Bakery',
                 'tagline' => 'Cakes, Bread & More...',
                 'email' => 'admin@slicebread.com',
-                'phone' => '081234567890',
+                'phone' => '085602385989',
                 'address' => 'Surakarta, Indonesia',
                 'hours' => '08:00 - 22:00',
-                'wa_number' => '+62 812 1314 1500',
-            ];
-        });
+                'wa_number' => '+62 856 0238 5989',
+            ]);
+        }
+        
+        $settings = Cache::get('app_settings');
 
         return view('Admin.Settings.settings', compact('settings'));
     }
@@ -52,8 +54,11 @@ class SettingsController extends Controller
             'wa_number.required' => 'Nomor WhatsApp harus diisi.',
         ]);
 
-        // Cache the settings
-        Cache::put('app_settings', $validated, null);
+        // Cache the settings forever
+        Cache::forget('app_settings');
+        Cache::forever('app_settings', $validated);
+
+        \App\Models\ActivityLog::log('system', 'Pengaturan toko diubah', "Admin mengubah pengaturan toko, termasuk nomor WhatsApp penerima pesanan menjadi {$validated['wa_number']}.");
 
         return back()->with('success', 'Pengaturan toko berhasil diperbarui!');
     }

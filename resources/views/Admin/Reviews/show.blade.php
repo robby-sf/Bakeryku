@@ -4,7 +4,7 @@
 @section('title', 'Detail Ulasan | Bakeryku')
 
 @section('header_title', 'Detail Ulasan')
-@section('header_subtitle', 'Lihat dan moderasi ulasan pelanggan secara detail.')
+@section('header_subtitle', 'Lihat, balas, atau sembunyikan ulasan pelanggan.')
 
 @section('header_actions')
     <a href="{{ route('admin.reviews.index') }}" class="bg-white border border-[#EAE2D6] text-[#855333] hover:bg-[#FAF8F5] px-4 py-2.5 rounded-lg text-sm font-bold transition shadow-sm flex items-center gap-2">
@@ -14,6 +14,13 @@
 @endsection
 
 @section('content')
+
+    @if (session('success'))
+        <div class="mb-6 p-4 rounded-xl bg-green-50 border border-green-200 text-green-700 text-sm font-bold flex items-center gap-2">
+            <i class="fa-regular fa-circle-check"></i> {{ session('success') }}
+        </div>
+    @endif
+
     <div class="bg-white rounded-2xl shadow-sm border border-[#EAE2D6] p-6">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
             <div>
@@ -21,7 +28,15 @@
                 <p class="text-sm text-gray-500">Produk: <span class="font-semibold text-[#452A1B]">{{ $review->product->name }}</span></p>
             </div>
             <div class="flex items-center gap-2">
-                <span class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-[#FAF8F5] text-[#452A1B] text-xs font-semibold border border-[#EAE2D6]">{{ ucfirst($review->status) }}</span>
+                @if($review->status === 'published')
+                    <span class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-green-100 text-green-700 text-xs font-semibold border border-green-200">
+                        <i class="fa-solid fa-eye text-[10px]"></i> Diterbitkan
+                    </span>
+                @else
+                    <span class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-gray-200 text-gray-600 text-xs font-semibold border border-gray-300">
+                        <i class="fa-solid fa-eye-slash text-[10px]"></i> Disembunyikan
+                    </span>
+                @endif
                 <span class="text-xs text-gray-400">{{ $review->created_at->format('d M Y H:i') }}</span>
             </div>
         </div>
@@ -41,72 +56,54 @@
             </div>
         </div>
 
+        {{-- Admin Response --}}
         @if($review->admin_response)
             <div class="mb-6 p-4 rounded-2xl bg-blue-50 border border-blue-100">
-                <p class="text-xs font-bold text-blue-700 mb-2">Respon Admin</p>
+                <p class="text-xs font-bold text-blue-700 mb-2"><i class="fa-solid fa-reply mr-1"></i>Balasan Admin</p>
                 <p class="text-sm text-blue-600">{{ $review->admin_response }}</p>
             </div>
         @endif
 
+        {{-- Reply Form --}}
+        <div class="mb-6 p-5 rounded-2xl bg-[#FAF8F5] border border-[#EAE2D6]">
+            <h3 class="font-bold text-[#452A1B] text-sm mb-3"><i class="fa-solid fa-reply mr-1 text-blue-600"></i> {{ $review->admin_response ? 'Ubah Balasan' : 'Tulis Balasan' }}</h3>
+            <form method="POST" action="{{ route('admin.reviews.respond', $review->id) }}">
+                @csrf
+                <textarea name="response" rows="3" required placeholder="Tulis balasan untuk ulasan ini..." class="w-full bg-white border border-[#EAE2D6] rounded-xl px-4 py-3 text-sm text-[#452A1B] font-medium focus:outline-none focus:border-[#BA8E60] focus:ring-1 focus:ring-[#BA8E60] transition-colors placeholder-gray-400 mb-3">{{ $review->admin_response }}</textarea>
+                <div class="flex justify-end">
+                    <button type="submit" class="px-5 py-2 rounded-xl text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 transition-colors">
+                        {{ $review->admin_response ? 'Perbarui Balasan' : 'Kirim Balasan' }}
+                    </button>
+                </div>
+            </form>
+        </div>
+
         <div class="grid gap-3 md:grid-cols-3">
-            @if($review->status === 'pending')
-                <form method="POST" action="{{ route('admin.reviews.approve', $review->id) }}" class="">
+            @if($review->status === 'published')
+                <form method="POST" action="{{ route('admin.reviews.hide', $review->id) }}">
                     @csrf
-                    <button type="submit" class="w-full bg-green-600 text-white px-4 py-3 rounded-xl text-sm font-bold hover:bg-green-700 transition">Setujui</button>
+                    <button type="submit" class="w-full bg-yellow-50 text-yellow-700 border border-yellow-200 px-4 py-3 rounded-xl text-sm font-bold hover:bg-yellow-100 transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-eye-slash"></i> Sembunyikan
+                    </button>
                 </form>
-                <button type="button" onclick="openRejectModal({{ $review->id }})" class="w-full bg-red-50 text-red-600 border border-red-200 px-4 py-3 rounded-xl text-sm font-bold hover:bg-red-100 transition">Tolak</button>
+            @else
+                <form method="POST" action="{{ route('admin.reviews.unhide', $review->id) }}">
+                    @csrf
+                    <button type="submit" class="w-full bg-green-50 text-green-700 border border-green-200 px-4 py-3 rounded-xl text-sm font-bold hover:bg-green-100 transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-eye"></i> Tampilkan Kembali
+                    </button>
+                </form>
             @endif
-            <form method="POST" action="{{ route('admin.reviews.destroy', $review->id) }}" class="">
+            <form method="POST" action="{{ route('admin.reviews.destroy', $review->id) }}">
                 @csrf
                 @method('DELETE')
-                <button type="submit" onclick="return confirm('Yakin ingin menghapus review ini?')" class="w-full bg-[#EAE2D6] text-[#452A1B] px-4 py-3 rounded-xl text-sm font-bold hover:bg-[#DCD0C0] transition">Hapus Review</button>
+                <button type="submit" onclick="return confirm('Yakin ingin menghapus review ini?')" class="w-full bg-red-50 text-red-600 border border-red-200 px-4 py-3 rounded-xl text-sm font-bold hover:bg-red-100 transition flex items-center justify-center gap-2">
+                    <i class="fa-regular fa-trash-can"></i> Hapus Review
+                </button>
             </form>
-            <a href="{{ route('admin.reviews.index', ['status' => 'all']) }}" class="w-full inline-flex items-center justify-center bg-white border border-[#EAE2D6] text-[#855333] px-4 py-3 rounded-xl text-sm font-bold hover:bg-[#FAF8F5] transition">Lihat Semua Ulasan</a>
+            <a href="{{ route('admin.reviews.index', ['status' => 'all']) }}" class="w-full inline-flex items-center justify-center bg-white border border-[#EAE2D6] text-[#855333] px-4 py-3 rounded-xl text-sm font-bold hover:bg-[#FAF8F5] transition">
+                Lihat Semua Ulasan
+            </a>
         </div>
     </div>
-
-    <div id="rejectModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-        <div class="bg-white rounded-2xl p-6 md:p-8 max-w-md w-full mx-4">
-            <h2 class="font-heading text-xl font-bold text-[#452A1B] mb-4">Tolak Ulasan</h2>
-            <form method="POST" id="rejectForm">
-                @csrf
-                <div class="mb-4">
-                    <label for="reason" class="block text-sm font-bold text-[#855333] mb-2">Alasan Penolakan (Opsional)</label>
-                    <textarea id="reason" name="reason" rows="4" placeholder="Tuliskan alasan penolakan ulasan..." class="w-full bg-[#FAF8F5] border border-[#EAE2D6] rounded-xl px-4 py-3 text-sm text-[#452A1B] font-medium focus:outline-none focus:border-[#BA8E60] focus:ring-1 focus:ring-[#BA8E60] transition-colors placeholder-gray-400"></textarea>
-                </div>
-                <div class="flex justify-end gap-3">
-                    <button type="button" class="px-4 py-2 rounded-lg text-sm font-bold text-[#855333] hover:bg-[#EAE2D6] transition-colors" onclick="closeRejectModal()">
-                        Batal
-                    </button>
-                    <button type="submit" class="px-4 py-2 rounded-lg text-sm font-bold text-white bg-red-500 hover:bg-red-600 transition-colors">
-                        Tolak Review
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <script>
-        let currentReviewId = null;
-
-        function openRejectModal(reviewId) {
-            currentReviewId = reviewId;
-            const form = document.getElementById('rejectForm');
-            form.action = `/admin/reviews/${reviewId}/reject`;
-            document.getElementById('rejectModal').classList.remove('hidden');
-            document.getElementById('rejectModal').classList.add('flex');
-        }
-
-        function closeRejectModal() {
-            document.getElementById('rejectModal').classList.add('hidden');
-            document.getElementById('rejectModal').classList.remove('flex');
-            currentReviewId = null;
-        }
-
-        document.getElementById('rejectModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeRejectModal();
-            }
-        });
-    </script>
 @endsection

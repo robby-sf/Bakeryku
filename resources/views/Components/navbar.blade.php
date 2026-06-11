@@ -3,9 +3,13 @@
         
         <div class="flex-1 flex justify-start">
             <a href="/" class="flex items-center gap-3 cursor-pointer">
-                <div class="bg-brand-primary text-white p-2 md:p-3 rounded-lg flex flex-col justify-center items-center">
-                    <h1 class="font-heading font-bold text-lg md:text-xl leading-none tracking-wider">Slice Bread </h1>
-                    <span class="text-[8px] md:text-[10px] uppercase tracking-widest mt-1">Bakery</span>
+                <div class="flex flex-col items-start">
+                    <h1 class="font-heading font-bold text-xl md:text-2xl leading-none text-brand-primary italic">Slice Bread</h1>
+                    <div class="w-full flex items-center gap-1.5 mt-1">
+                        <span class="flex-1 h-px bg-brand-primary/40"></span>
+                        <span class="text-[7px] md:text-[8px] uppercase tracking-[0.25em] text-brand-primary/70 font-semibold whitespace-nowrap">Bakery & Pastry</span>
+                        <span class="flex-1 h-px bg-brand-primary/40"></span>
+                    </div>
                 </div>
             </a>
         </div>

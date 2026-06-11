@@ -42,6 +42,7 @@ class AuthController extends Controller
             $user = Auth::guard('admin')->user();
             $user->update(['last_login_at' => now()]);
             $request->session()->regenerate();
+            \App\Models\ActivityLog::log('user_login', 'Admin masuk', "Admin {$user->name} masuk ke panel admin.", $user->id);
             return redirect()->intended(route('admin.dashboard'))->with('success', 'Login berhasil');
         }
 
@@ -69,6 +70,7 @@ class AuthController extends Controller
             Auth::guard('admin')->login($user, $request->boolean('remember'));
             $user->update(['last_login_at' => now()]);
             $request->session()->regenerate();
+            \App\Models\ActivityLog::log('user_login', 'Admin masuk', "Admin {$user->name} masuk ke panel admin.", $user->id);
 
             return redirect()->intended(route('admin.dashboard'))->with('success', 'Login berhasil');
         }
@@ -111,6 +113,7 @@ class AuthController extends Controller
         ]);
 
         Auth::guard('admin')->login($user);
+        \App\Models\ActivityLog::log('user_register', 'Admin baru terdaftar', "Admin baru {$user->name} berhasil mendaftar.", $user->id);
         return redirect()->route('admin.dashboard')->with('success', 'Akun admin berhasil dibuat.');
     }
 

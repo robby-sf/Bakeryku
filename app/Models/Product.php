@@ -37,27 +37,27 @@ class Product extends Model
     }
 
     /**
-     * Get only approved reviews for this product
+     * Get only published reviews for this product
      */
-    public function approvedReviews(): HasMany
+    public function publishedReviews(): HasMany
     {
-        return $this->reviews()->approved();
+        return $this->reviews()->published();
     }
 
     /**
-     * Get the average rating of this product
+     * Get the average rating of this product (from published reviews)
      */
     public function averageRating(): float
     {
-        return $this->approvedReviews()->avg('rating') ?? 0;
+        return $this->publishedReviews()->avg('rating') ?? 0;
     }
 
     /**
-     * Get the review count
+     * Get the published review count
      */
     public function reviewCount(): int
     {
-        return $this->approvedReviews()->count();
+        return $this->publishedReviews()->count();
     }
 
     /**
@@ -84,4 +84,3 @@ class Product extends Model
         return $this->hasMany(Order::class);
     }
 }
-

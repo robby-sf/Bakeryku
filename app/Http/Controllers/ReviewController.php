@@ -13,6 +13,7 @@ class ReviewController extends Controller
 {
     /**
      * Store a newly created review in storage.
+     * Review is published immediately — no admin approval needed.
      */
     public function store(Request $request)
     {
@@ -24,17 +25,17 @@ class ReviewController extends Controller
 
         $userId = Auth::guard('user')->id();
 
-        // Check if user already has a pending review for this product
+        // Check if user already reviewed this product
         $existingReview = Review::where('user_id', $userId)
             ->where('product_id', $validated['product_id'])
-            ->where('status', 'pending')
             ->first();
 
         if ($existingReview) {
-            return response()->json(['message' => 'Anda sudah memiliki review yang pending untuk produk ini'], 422);
+            return redirect()->back()->with('error', 'Anda sudah memberikan ulasan untuk produk ini.');
         }
 
         $validated['user_id'] = $userId;
+        $validated['status'] = 'published'; // Langsung tampil, tanpa approval
         $review = Review::create($validated);
 
         // Create notification for admin
@@ -46,11 +47,13 @@ class ReviewController extends Controller
             'title' => 'Review Baru',
             'message' => "User telah menambahkan review untuk produk {$product->name}",
             'type' => 'review',
-            'link' => route('admin.reviews.index', ['status' => 'pending']),
+            'link' => route('admin.reviews.index'),
             'related_review_id' => $review->id,
         ]);
 
-        return redirect()->back()->with('success', 'Review berhasil dikirim dan menunggu persetujuan admin');
+        \App\Models\ActivityLog::log('review', 'Ulasan baru pada produk ' . $product->name, "Pengguna " . Auth::guard('user')->user()->name . " memberikan ulasan bintang {$review->rating}.", $userId);
+
+        return redirect()->back()->with('success', 'Ulasan berhasil dikirim!');
     }
 
     /**
@@ -61,11 +64,6 @@ class ReviewController extends Controller
         // Check authorization
         if ($review->user_id !== Auth::guard('user')->id()) {
             return response()->json(['message' => 'Unauthorized'], 403);
-        }
-
-        // Only pending reviews can be updated
-        if ($review->status !== 'pending') {
-            return response()->json(['message' => 'Hanya review yang pending dapat diubah'], 422);
         }
 
         $validated = $request->validate([
@@ -88,24 +86,19 @@ class ReviewController extends Controller
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-        // Only pending reviews can be deleted
-        if ($review->status !== 'pending') {
-            return response()->json(['message' => 'Hanya review yang pending dapat dihapus'], 422);
-        }
-
         $review->delete();
 
         return response()->json(['message' => 'Review berhasil dihapus!']);
     }
 
     /**
-     * Get reviews by product ID (approved only)
+     * Get reviews by product ID (published only)
      */
     public function getProductReviews(Product $product)
     {
-        $reviews = $product->approvedReviews()
+        $reviews = $product->publishedReviews()
             ->with('user')
-            ->latest('reviewed_at')
+            ->latest()
             ->paginate(10);
 
         return response()->json($reviews);

@@ -26,9 +26,8 @@ class ReviewController extends Controller
 
         $counts = [
             'all' => Review::count(),
-            'pending' => Review::pending()->count(),
-            'approved' => Review::approved()->count(),
-            'rejected' => Review::rejected()->count(),
+            'published' => Review::published()->count(),
+            'hidden' => Review::hidden()->count(),
         ];
 
         return view('Admin.Reviews.reviews', compact('reviews', 'status', 'counts'));
@@ -45,58 +44,51 @@ class ReviewController extends Controller
     }
 
     /**
-     * Approve a review.
+     * Hide a review (make it invisible to public).
      */
-    public function approve(Review $review)
+    public function hide(Review $review)
     {
         $review->update([
-            'status' => 'approved',
-            'reviewed_at' => now(),
+            'status' => 'hidden',
         ]);
 
         // Notify user
         Notification::create([
             'user_id' => $review->user_id,
-            'title' => 'Review Disetujui',
-            'message' => "Review Anda untuk produk {$review->product->name} telah disetujui!",
-            'type' => 'review_approved',
+            'title' => 'Review Disembunyikan',
+            'message' => "Review Anda untuk produk {$review->product->name} telah disembunyikan oleh admin.",
+            'type' => 'review_hidden',
             'link' => route('notifications.index'),
             'related_review_id' => $review->id,
         ]);
 
-        return back()->with('success', 'Review berhasil disetujui!');
+        return back()->with('success', 'Review berhasil disembunyikan!');
     }
 
     /**
-     * Reject a review with optional reason.
+     * Unhide a review (make it visible to public again).
      */
-    public function reject(Request $request, Review $review)
+    public function unhide(Review $review)
     {
-        $validated = $request->validate([
-            'reason' => ['nullable', 'string', 'max:500'],
-        ]);
-
         $review->update([
-            'status' => 'rejected',
-            'admin_response' => $validated['reason'] ?? 'Review ditolak oleh admin',
-            'reviewed_at' => now(),
+            'status' => 'published',
         ]);
 
         // Notify user
         Notification::create([
             'user_id' => $review->user_id,
-            'title' => 'Review Ditolak',
-            'message' => "Review Anda untuk produk {$review->product->name} telah ditolak.",
-            'type' => 'review_rejected',
+            'title' => 'Review Ditampilkan Kembali',
+            'message' => "Review Anda untuk produk {$review->product->name} telah ditampilkan kembali.",
+            'type' => 'review_unhidden',
             'link' => route('notifications.index'),
             'related_review_id' => $review->id,
         ]);
 
-        return back()->with('success', 'Review berhasil ditolak!');
+        return back()->with('success', 'Review berhasil ditampilkan kembali!');
     }
 
     /**
-     * Add response to a review.
+     * Add response/reply to a review.
      */
     public function respond(Request $request, Review $review)
     {
@@ -118,7 +110,7 @@ class ReviewController extends Controller
             'related_review_id' => $review->id,
         ]);
 
-        return back()->with('success', 'Respon berhasil ditambahkan!');
+        return back()->with('success', 'Balasan berhasil ditambahkan!');
     }
 
     /**

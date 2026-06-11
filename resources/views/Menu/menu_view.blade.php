@@ -19,12 +19,12 @@
                     @endphp
 
                     <div class="bg-[#EAE4D9] rounded-2xl aspect-square flex items-center justify-center p-8 overflow-hidden">
-                        <img src="{{ $galleryImages->first() ? Storage::url($galleryImages->first()) : $galleryPlaceholder }}" alt="{{ $product->name }}" class="w-full h-full object-cover rounded-xl mix-blend-multiply opacity-90 hover:scale-105 transition duration-500">
+                        <img id="main-product-image" src="{{ $galleryImages->first() ? Storage::url($galleryImages->first()) : $galleryPlaceholder }}" alt="{{ $product->name }}" class="w-full h-full object-cover rounded-xl mix-blend-multiply opacity-90 transition-all duration-300 hover:scale-105">
                     </div>
-                    @if ($galleryImages->count())
+                    @if ($galleryImages->count() > 1)
                         <div class="flex gap-4">
                             @foreach($galleryImages->take(3) as $image)
-                                <button type="button" class="w-20 h-20 bg-[#EAE4D9] rounded-xl overflow-hidden border-2 border-transparent hover:border-brand-primary transition p-1 opacity-70 hover:opacity-100">
+                                <button type="button" data-src="{{ Storage::url($image) }}" class="gallery-thumb w-20 h-20 bg-[#EAE4D9] rounded-xl overflow-hidden border-2 border-transparent hover:border-brand-primary transition p-1 opacity-70 hover:opacity-100">
                                     <img src="{{ Storage::url($image) }}" class="w-full h-full object-cover rounded-lg mix-blend-multiply" alt="{{ $product->name }} gallery">
                                 </button>
                             @endforeach
@@ -126,24 +126,33 @@
                     <span class="block sm:inline">{{ session('success') }}</span>
                 </div>
                 @endif
+                @if(session('error'))
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6" role="alert">
+                    <span class="block sm:inline">{{ session('error') }}</span>
+                </div>
+                @endif
                 
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-8">
                     <div>
                         <h2 class="font-heading text-2xl md:text-3xl font-bold text-brand-dark mb-4 flex items-center gap-2">
-                            Ulasan Pelanggan <span class="text-[#C28C62] font-normal text-xl md:text-2xl">(2)</span>
+                            Ulasan Pelanggan <span class="text-[#C28C62] font-normal text-xl md:text-2xl">({{ $reviewCount }})</span>
                         </h2>
                         
                         <div class="flex items-center gap-4">
-                            <div class="text-4xl md:text-5xl font-bold text-brand-dark">4.9</div>
+                            <div class="text-4xl md:text-5xl font-bold text-brand-dark">{{ number_format($averageRating, 1) }}</div>
                             <div class="flex flex-col">
                                 <div class="flex text-yellow-400 text-lg mb-1">
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-regular fa-star-half-stroke"></i>
+                                    @for ($i = 0; $i < 5; $i++)
+                                        @if ($i < intval($averageRating))
+                                            <i class="fa-solid fa-star"></i>
+                                        @elseif ($i < $averageRating)
+                                            <i class="fa-regular fa-star-half-stroke"></i>
+                                        @else
+                                            <i class="fa-regular fa-star"></i>
+                                        @endif
+                                    @endfor
                                 </div>
-                                <span class="text-xs text-gray-500">Berdasarkan 234 ulasan</span>
+                                <span class="text-xs text-gray-500">Berdasarkan {{ $reviewCount }} ulasan</span>
                             </div>
                         </div>
                     </div>
@@ -196,31 +205,31 @@
                 </div>
                 @endif
 
-                <div class="flex items-center gap-2 overflow-x-auto pb-4 mb-6 scrollbar-hide snap-x">
-                    <button class="snap-start flex-shrink-0 px-4 py-2 bg-brand-primary text-white text-xs md:text-sm font-medium rounded-full whitespace-nowrap shadow-sm">
+                <div class="flex items-center gap-2 overflow-x-auto pb-4 mb-6 scrollbar-hide snap-x" id="review-filters">
+                    <button data-star="all" class="review-filter-btn snap-start flex-shrink-0 px-4 py-2 bg-brand-primary text-white text-xs md:text-sm font-medium rounded-full whitespace-nowrap shadow-sm transition-all duration-300">
                         Semua
                     </button>
-                    <button class="snap-start flex-shrink-0 px-4 py-2 bg-white hover:bg-gray-50 border border-gray-200 text-brand-dark text-xs md:text-sm font-medium rounded-full whitespace-nowrap transition flex items-center gap-1">
+                    <button data-star="5" class="review-filter-btn snap-start flex-shrink-0 px-4 py-2 bg-white hover:bg-gray-50 border border-gray-200 text-brand-dark text-xs md:text-sm font-medium rounded-full whitespace-nowrap transition-all duration-300 flex items-center gap-1">
                         5 <i class="fa-solid fa-star text-yellow-500 text-[10px]"></i>
                     </button>
-                    <button class="snap-start flex-shrink-0 px-4 py-2 bg-white hover:bg-gray-50 border border-gray-200 text-brand-dark text-xs md:text-sm font-medium rounded-full whitespace-nowrap transition flex items-center gap-1">
+                    <button data-star="4" class="review-filter-btn snap-start flex-shrink-0 px-4 py-2 bg-white hover:bg-gray-50 border border-gray-200 text-brand-dark text-xs md:text-sm font-medium rounded-full whitespace-nowrap transition-all duration-300 flex items-center gap-1">
                         4 <i class="fa-solid fa-star text-yellow-500 text-[10px]"></i>
                     </button>
-                    <button class="snap-start flex-shrink-0 px-4 py-2 bg-white hover:bg-gray-50 border border-gray-200 text-brand-dark text-xs md:text-sm font-medium rounded-full whitespace-nowrap transition flex items-center gap-1">
+                    <button data-star="3" class="review-filter-btn snap-start flex-shrink-0 px-4 py-2 bg-white hover:bg-gray-50 border border-gray-200 text-brand-dark text-xs md:text-sm font-medium rounded-full whitespace-nowrap transition-all duration-300 flex items-center gap-1">
                         3 <i class="fa-solid fa-star text-yellow-500 text-[10px]"></i>
                     </button>
-                    <button class="snap-start flex-shrink-0 px-4 py-2 bg-white hover:bg-gray-50 border border-gray-200 text-brand-dark text-xs md:text-sm font-medium rounded-full whitespace-nowrap transition flex items-center gap-1">
+                    <button data-star="2" class="review-filter-btn snap-start flex-shrink-0 px-4 py-2 bg-white hover:bg-gray-50 border border-gray-200 text-brand-dark text-xs md:text-sm font-medium rounded-full whitespace-nowrap transition-all duration-300 flex items-center gap-1">
                         2 <i class="fa-solid fa-star text-yellow-500 text-[10px]"></i>
                     </button>
-                    <button class="snap-start flex-shrink-0 px-4 py-2 bg-white hover:bg-gray-50 border border-gray-200 text-brand-dark text-xs md:text-sm font-medium rounded-full whitespace-nowrap transition flex items-center gap-1">
+                    <button data-star="1" class="review-filter-btn snap-start flex-shrink-0 px-4 py-2 bg-white hover:bg-gray-50 border border-gray-200 text-brand-dark text-xs md:text-sm font-medium rounded-full whitespace-nowrap transition-all duration-300 flex items-center gap-1">
                         1 <i class="fa-solid fa-star text-yellow-500 text-[10px]"></i>
                     </button>
                 </div>
 
-                <div class="flex flex-col gap-4">
+                <div class="flex flex-col gap-4" id="reviews-list">
                     
                     @forelse ($reviews as $review)
-                    <div class="bg-[#FFFDFB] border border-[#F0EBE1] rounded-2xl p-5 md:p-6 shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
+                    <div class="review-item bg-[#FFFDFB] border border-[#F0EBE1] rounded-2xl p-5 md:p-6 shadow-[0_2px_8px_rgba(0,0,0,0.02)] transition-all duration-300" data-rating="{{ $review->rating }}">
                         <div class="flex justify-between items-start mb-3">
                             <h4 class="font-bold text-brand-dark text-base md:text-lg">{{ $review->user->name }}</h4>
                             <div class="flex text-yellow-400 text-xs md:text-sm">
@@ -236,6 +245,12 @@
                         <p class="italic text-gray-600 text-sm md:text-base mb-4 leading-relaxed font-serif">
                             "{{ $review->comment }}"
                         </p>
+                        @if($review->admin_response)
+                            <div class="mb-3 p-3 rounded-lg bg-blue-50 border border-blue-100">
+                                <p class="text-[11px] font-bold text-blue-700 mb-1"><i class="fa-solid fa-reply mr-1"></i>Balasan Admin</p>
+                                <p class="text-sm text-blue-600">{{ $review->admin_response }}</p>
+                            </div>
+                        @endif
                         <p class="text-[11px] md:text-xs text-[#B08D6A] font-medium tracking-wide">{{ $review->created_at->format('Y-m-d') }}</p>
                     </div>
                     @empty
@@ -244,6 +259,9 @@
                     </div>
                     @endforelse
 
+                    <div id="no-filtered-reviews" class="text-center py-12 hidden">
+                        <p class="text-gray-500 text-sm">Tidak ada ulasan dengan rating bintang ini.</p>
+                    </div>
                 </div>
 
                 @if ($reviews->hasPages())
@@ -256,77 +274,139 @@
         </div>
     </div>
 
-    {{-- SCRIPT UNTUK FORM TOGGLE & STAR RATING --}}
-    @if(Auth::guard('user')->check() && Auth::guard('user')->user()->role === 'user')
+    {{-- SCRIPT UNTUK FORM TOGGLE, GALLERY, STAR FILTERS & STAR RATING HOVER --}}
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // 1. Galeri Gambar Produk Interaktif
+            const mainImg = document.getElementById('main-product-image');
+            const thumbs = document.querySelectorAll('.gallery-thumb');
+
+            thumbs.forEach((thumb, index) => {
+                if (index === 0) {
+                    thumb.classList.add('border-brand-primary', 'opacity-100');
+                    thumb.classList.remove('border-transparent', 'opacity-70');
+                }
+
+                thumb.addEventListener('click', function () {
+                    const newSrc = this.getAttribute('data-src');
+                    if (mainImg && newSrc) {
+                        mainImg.style.opacity = '0';
+                        mainImg.style.transform = 'scale(0.98)';
+                        
+                        setTimeout(() => {
+                            mainImg.src = newSrc;
+                            mainImg.style.opacity = '0.9';
+                            mainImg.style.transform = 'scale(1)';
+                        }, 200);
+
+                        thumbs.forEach(t => {
+                            t.classList.remove('border-brand-primary', 'opacity-100');
+                            t.classList.add('border-transparent', 'opacity-70');
+                        });
+                        this.classList.remove('border-transparent', 'opacity-70');
+                        this.classList.add('border-brand-primary', 'opacity-100');
+                    }
+                });
+            });
+
+            // 2. Filter Ulasan Berdasarkan Bintang
+            const filterBtns = document.querySelectorAll('.review-filter-btn');
+            const reviewItems = document.querySelectorAll('.review-item');
+            const noReviewsMsg = document.getElementById('no-filtered-reviews');
+
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const star = this.getAttribute('data-star');
+
+                    filterBtns.forEach(b => {
+                        b.classList.remove('bg-brand-primary', 'text-white', 'shadow-sm');
+                        b.classList.add('bg-white', 'hover:bg-gray-50', 'border', 'border-gray-200', 'text-brand-dark');
+                    });
+                    this.classList.remove('bg-white', 'hover:bg-gray-50', 'border', 'border-gray-200', 'text-brand-dark');
+                    this.classList.add('bg-brand-primary', 'text-white', 'shadow-sm');
+
+                    let visibleCount = 0;
+
+                    reviewItems.forEach(item => {
+                        const rating = item.getAttribute('data-rating');
+                        if (star === 'all' || rating === star) {
+                            item.style.display = '';
+                            item.style.opacity = '0';
+                            item.style.transform = 'translateY(10px)';
+                            setTimeout(() => {
+                                item.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                                item.style.opacity = '1';
+                                item.style.transform = 'translateY(0)';
+                            }, 50);
+                            visibleCount++;
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+
+                    if (visibleCount === 0 && reviewItems.length > 0) {
+                        noReviewsMsg.classList.remove('hidden');
+                    } else {
+                        noReviewsMsg.classList.add('hidden');
+                    }
+                });
+            });
+
+            // 3. Tulis Ulasan Form Toggle (Hanya untuk User Logged In)
             const btnTulis = document.getElementById('btn-tulis-ulasan');
             const btnBatal = document.getElementById('btn-batal-ulasan');
             const formContainer = document.getElementById('form-ulasan-container');
 
             if (btnTulis && btnBatal && formContainer) {
-                // Logika untuk Muncul/Sembunyi Form
                 btnTulis.addEventListener('click', function () {
                     formContainer.classList.remove('hidden');
-                    btnTulis.classList.add('hidden'); // Sembunyikan tombol 'Tulis Ulasan'
+                    btnTulis.classList.add('hidden');
                 });
 
                 btnBatal.addEventListener('click', function () {
                     formContainer.classList.add('hidden');
-                    btnTulis.classList.remove('hidden'); // Tampilkan lagi tombolnya
+                    btnTulis.classList.remove('hidden');
                 });
+            }
 
-                // Logika untuk Rating Bintang Interaktif
-                const stars = document.querySelectorAll('#star-rating i');
-                const ratingInput = document.getElementById('rating-input');
-                
-                if (stars.length > 0 && ratingInput) {
-                    stars.forEach(star => {
-                        star.addEventListener('click', function () {
-                            const value = this.getAttribute('data-value');
-                            ratingInput.value = value; // Masukkan angka ke input hidden
-                            
-                            // Update visual warna bintang
-                            stars.forEach(s => {
-                                if (s.getAttribute('data-value') <= value) {
-                                    s.classList.remove('text-gray-300');
-                                    s.classList.add('text-yellow-400');
-                                } else {
-                                    s.classList.remove('text-yellow-400');
-                                    s.classList.add('text-gray-300');
-                                }
-                            });
+            // 4. Ulasan Bintang Interaktif Hover & Click
+            const stars = document.querySelectorAll('#star-rating i');
+            const ratingInput = document.getElementById('rating-input');
+            
+            if (stars.length > 0 && ratingInput) {
+                stars.forEach(star => {
+                    star.addEventListener('mouseover', function () {
+                        const hoverValue = this.getAttribute('data-value');
+                        stars.forEach(s => {
+                            if (parseInt(s.getAttribute('data-value'), 10) <= parseInt(hoverValue, 10)) {
+                                s.classList.remove('text-gray-300');
+                                s.classList.add('text-yellow-400');
+                            } else {
+                                s.classList.remove('text-yellow-400');
+                                s.classList.add('text-gray-300');
+                            }
                         });
                     });
-                }
-            }
-        });
-    </script>
-    @endif
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const quantityMinus = document.querySelector('.quantity-minus');
-            const quantityPlus = document.querySelector('.quantity-plus');
-            const quantityDisplay = document.getElementById('quantity-display');
-            const orderQuantity = document.getElementById('order-quantity');
 
-            if (quantityMinus && quantityPlus && quantityDisplay && orderQuantity) {
-                let quantity = parseInt(quantityDisplay.value, 10) || 1;
+                    star.addEventListener('mouseout', function () {
+                        const currentValue = parseInt(ratingInput.value, 10) || 0;
+                        stars.forEach(s => {
+                            if (parseInt(s.getAttribute('data-value'), 10) <= currentValue) {
+                                s.classList.remove('text-gray-300');
+                                s.classList.add('text-yellow-400');
+                            } else {
+                                s.classList.remove('text-yellow-400');
+                                s.classList.add('text-gray-300');
+                            }
+                        });
+                    });
 
-                quantityMinus.addEventListener('click', function (event) {
-                    event.preventDefault();
-                    if (quantity > 1) {
-                        quantity -= 1;
-                        quantityDisplay.value = quantity;
-                        orderQuantity.value = quantity;
-                    }
-                });
-
-                quantityPlus.addEventListener('click', function (event) {
-                    event.preventDefault();
-                    quantity += 1;
-                    quantityDisplay.value = quantity;
-                    orderQuantity.value = quantity;
+                    star.addEventListener('click', function () {
+                        const value = this.getAttribute('data-value');
+                        ratingInput.value = value;
+                        const errorMsg = document.getElementById('rating-error');
+                        if (errorMsg) errorMsg.classList.add('hidden');
+                    });
                 });
             }
         });

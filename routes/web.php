@@ -29,9 +29,56 @@ Route::get('/', function () {
     }
 
     $settings = Cache::get('app_settings', []);
-    $waNumber = $settings['wa_number'] ?? '+62 812 1314 1500';
+    $waNumber = $settings['wa_number'] ?? '+62 856 0238 5989';
 
-    return view('landing_page', compact('promos', 'waNumber'));
+    // Hero products: top 5 highest-rated products with images
+    try {
+        $heroProducts = Product::where('status', 'Tersedia')
+            ->whereNotNull('image')
+            ->withCount(['reviews as published_reviews_count' => function ($q) {
+                $q->where('status', 'published');
+            }])
+            ->withAvg(['reviews as published_reviews_avg' => function ($q) {
+                $q->where('status', 'published');
+            }], 'rating')
+            ->orderByDesc('published_reviews_avg')
+            ->orderByDesc('published_reviews_count')
+            ->take(5)
+            ->get();
+    } catch (\Throwable $e) {
+        $heroProducts = collect();
+    }
+
+    // Featured menu: top 6 highest-rated available products
+    try {
+        $featuredProducts = Product::where('status', 'Tersedia')
+            ->withCount(['reviews as published_reviews_count' => function ($q) {
+                $q->where('status', 'published');
+            }])
+            ->withAvg(['reviews as published_reviews_avg' => function ($q) {
+                $q->where('status', 'published');
+            }], 'rating')
+            ->orderByDesc('published_reviews_avg')
+            ->orderByDesc('published_reviews_count')
+            ->take(6)
+            ->get();
+    } catch (\Throwable $e) {
+        $featuredProducts = collect();
+    }
+
+    // Curated reviews: high-rated approved reviews from various products
+    try {
+        $reviews = \App\Models\Review::where('status', 'published')
+            ->whereIn('rating', [4, 5])
+            ->with(['user', 'product'])
+            ->inRandomOrder()
+            ->take(8)
+            ->get();
+    } catch (\Throwable $e) {
+        $reviews = collect();
+    }
+
+    return view('landing_page', compact('promos', 'waNumber', 'heroProducts', 'featuredProducts', 'reviews'));
 })->name('landing_page');
 Route::get('/menu', function () {
     $products = Product::where('status', 'Tersedia')->get();
@@ -45,7 +92,18 @@ Route::get('/menu', function () {
     ];
     return view('Menu.menu_list', compact('products', 'categories', 'categoryMap'));
 })->name('menu');
-Route::get('/stores', function () {return view('Store.store');})->name('store');
+Route::get('/stores', function () {
+    try {
+        $products = Product::where('status', 'Tersedia')
+            ->whereNotNull('image')
+            ->inRandomOrder()
+            ->take(5)
+            ->get();
+    } catch (\Throwable $e) {
+        $products = collect();
+    }
+    return view('Store.store', compact('products'));
+})->name('store');
 Route::get('/promo', function () {
     try {
         $promos = Promo::active()->latest()->get();
@@ -54,7 +112,7 @@ Route::get('/promo', function () {
     }
 
     $settings = Cache::get('app_settings', []);
-    $waNumber = $settings['wa_number'] ?? '+62 812 1314 1500';
+    $waNumber = $settings['wa_number'] ?? '+62 856 0238 5989';
 
     return view('Promo.promo', compact('promos', 'waNumber'));
 })->name('promo');
@@ -122,8 +180,8 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     // Admin review routes
     Route::get('/reviews', [AdminReviewController::class, 'index'])->name('reviews.index');
     Route::get('/reviews/{review}', [AdminReviewController::class, 'show'])->name('reviews.show');
-    Route::post('/reviews/{review}/approve', [AdminReviewController::class, 'approve'])->name('reviews.approve');
-    Route::post('/reviews/{review}/reject', [AdminReviewController::class, 'reject'])->name('reviews.reject');
+    Route::post('/reviews/{review}/hide', [AdminReviewController::class, 'hide'])->name('reviews.hide');
+    Route::post('/reviews/{review}/unhide', [AdminReviewController::class, 'unhide'])->name('reviews.unhide');
     Route::post('/reviews/{review}/respond', [AdminReviewController::class, 'respond'])->name('reviews.respond');
     Route::delete('/reviews/{review}', [AdminReviewController::class, 'destroy'])->name('reviews.destroy');
     
@@ -136,7 +194,61 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
     Route::post('/notifications/mark-all-read', [AdminNotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');
     Route::get('/notifications/unread-count', [AdminNotificationController::class, 'unreadCount'])->name('notifications.unread-count');
     Route::get('/notifications/recent', [AdminNotificationController::class, 'recent'])->name('notifications.recent');
-    Route::get('/activities', function () {return view('Admin.Activities.activities');})->name('activities');
+    Route::get('/activities', function () {
+        $type = request('type', 'all');
+        $query = \App\Models\ActivityLog::with('user')->latest();
+
+        if ($type !== 'all') {
+            $query->where('type', $type);
+        }
+
+        $activities = $query->paginate(10)->withQueryString();
+        return view('Admin.Activities.activities', compact('activities', 'type'));
+    })->name('activities');
+
+    Route::get('/activities/export', function () {
+        $type = request('type', 'all');
+        $query = \App\Models\ActivityLog::with('user')->latest();
+
+        if ($type !== 'all') {
+            $query->where('type', $type);
+        }
+
+        $logs = $query->get();
+
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="log_aktivitas_' . $type . '_' . date('Ymd_His') . '.csv"',
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0'
+        ];
+
+        $callback = function () use ($logs) {
+            $file = fopen('php://output', 'w');
+            
+            // Add BOM for Excel UTF-8 compatibility
+            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+
+            // CSV Header
+            fputcsv($file, ['ID', 'Tanggal', 'Pengguna', 'Tipe', 'Judul', 'Deskripsi']);
+
+            foreach ($logs as $log) {
+                fputcsv($file, [
+                    $log->id,
+                    $log->created_at->format('Y-m-d H:i:s') . ' WIB',
+                    $log->user ? $log->user->name . ' (' . $log->user->email . ')' : 'System / Guest',
+                    ucfirst($log->type),
+                    $log->title,
+                    $log->description
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    })->name('activities.export');
     
     // Promo CRUD routes
     Route::get('/promos', [PromoController::class, 'index'])->name('promos');

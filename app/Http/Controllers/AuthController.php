@@ -33,7 +33,9 @@ class AuthController extends Controller
         $credentials['role'] = 'user';
 
         if (Auth::guard('user')->attempt($credentials, $request->boolean('remember'))) {
+            $user = Auth::guard('user')->user();
             $request->session()->regenerate();
+            \App\Models\ActivityLog::log('user_login', 'Pengguna masuk', "Pengguna {$user->name} masuk ke akun.", $user->id);
             return redirect()->route('landing_page')->with('success', 'Login berhasil.');
         }
 
@@ -79,7 +81,9 @@ class AuthController extends Controller
             'role' => 'user',
         ]);
 
-        return redirect()->route('login')->with('success', '✅ Akun berhasil dibuat! Silakan login dengan email dan password Anda.');
+        \App\Models\ActivityLog::log('user_register', 'Pengguna baru mendaftar', "Pengguna {$user->name} berhasil membuat akun baru.", $user->id);
+
+        return redirect()->route('login')->with('success', 'Akun berhasil dibuat! Silakan login dengan email dan password Anda.');
     }
 
     public function logout(Request $request)

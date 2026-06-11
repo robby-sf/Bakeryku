@@ -18,7 +18,6 @@
                                 <div>
                                     <h2 class="font-bold text-lg text-brand-dark">{{ $order->product->name }}</h2>
                                     <p class="text-sm text-gray-500">Jumlah: {{ $order->quantity }} • Total Rp {{ number_format($order->total_price, 0, ',', '.') }}</p>
-                                    <p class="text-sm text-gray-500">Status: <span class="font-semibold">{{ ucfirst($order->status) }}</span></p>
                                 </div>
                                 <div class="text-right">
                                     <p class="text-sm text-gray-500">{{ $order->created_at->diffForHumans() }}</p>

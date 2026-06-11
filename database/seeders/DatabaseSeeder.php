@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             OrderSeeder::class,
             NotificationSeeder::class,
             PageVisitSeeder::class,
+            ActivityLogSeeder::class,
         ]);
     }
 }

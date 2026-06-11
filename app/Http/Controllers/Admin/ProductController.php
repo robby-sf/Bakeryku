@@ -56,7 +56,9 @@ class ProductController extends Controller
             $validated['image_3'] = $imagePath;
         }
 
-        Product::create($validated);
+        $product = Product::create($validated);
+
+        \App\Models\ActivityLog::log('product', 'Menu baru ditambahkan', "Produk baru {$product->name} berhasil ditambahkan ke kategori {$product->category}.");
 
         return redirect()->route('admin.products.index')->with('success', 'Produk berhasil ditambahkan!');
     }
@@ -119,6 +121,8 @@ class ProductController extends Controller
 
         $product->update($validated);
 
+        \App\Models\ActivityLog::log('product', 'Katalog menu diperbarui', "Admin memperbarui informasi pada produk {$product->name}.");
+
         return redirect()->route('admin.products.index')->with('success', 'Produk berhasil diperbarui!');
     }
 
@@ -132,7 +136,10 @@ class ProductController extends Controller
             \Storage::disk('public')->delete($product->image);
         }
 
+        $productName = $product->name;
         $product->delete();
+
+        \App\Models\ActivityLog::log('product', 'Menu dihapus', "Admin menghapus produk {$productName} dari katalog.");
 
         return redirect()->route('admin.products.index')->with('success', 'Produk berhasil dihapus!');
     }
