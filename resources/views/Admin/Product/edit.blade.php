@@ -1,5 +1,5 @@
 {{-- resources/views/Admin/Product/edit.blade.php --}}
-@extends('Layouts.admin')
+@extends('layouts.admin')
 
 @section('title', 'Edit Menu - ' . $product->name . ' | Bakeryku')
 

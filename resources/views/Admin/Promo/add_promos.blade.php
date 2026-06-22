@@ -1,5 +1,5 @@
 {{-- resources/views/Admin/Promo/add_promos.blade.php --}}
-@extends('Layouts.admin')
+@extends('layouts.admin')
 
 @php
     $isEdit = isset($promo);

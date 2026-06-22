@@ -1,5 +1,5 @@
 {{-- resources/views/Admin/Promo/promos.blade.php --}}
-@extends('Layouts.admin')
+@extends('layouts.admin')
 
 @section('title', 'Daftar Promos | Slice Bread Bakery')
 

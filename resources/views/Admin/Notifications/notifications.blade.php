@@ -1,5 +1,5 @@
 {{-- resources/views/Admin/Notifications/index.blade.php --}}
-@extends('Layouts.admin')
+@extends('layouts.admin')
 
 @section('title', 'Notifikasi | Ananda Bakery')
 

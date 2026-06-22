@@ -1,5 +1,5 @@
 {{-- resources/views/Admin/Settings/settings.blade.php --}}
-@extends('Layouts.admin')
+@extends('layouts.admin')
 
 @section('title', 'Pengaturan Toko | Slice Bread Bakery')
 

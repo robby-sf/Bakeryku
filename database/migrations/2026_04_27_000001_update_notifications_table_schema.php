@@ -34,7 +34,7 @@ return new class extends Migration
             });
         }
 
-        if (Schema::hasColumn('notifications', 'user_id')) {
+        if (Schema::hasColumn('notifications', 'user_id') && Schema::hasColumn('users', 'role')) {
             $adminId = DB::table('users')->where('role', 'admin')->value('id');
 
             if ($adminId) {

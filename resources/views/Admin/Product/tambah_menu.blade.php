@@ -1,5 +1,5 @@
 {{-- resources/views/Admin/Menu/menu_create.blade.php --}}
-@extends('Layouts.admin')
+@extends('layouts.admin')
 
 @section('title', 'Tambah Menu Baru | Slice Bread Bakery')
 

@@ -1,5 +1,5 @@
 {{-- resources/views/Admin/Reviews/reviews.blade.php --}}
-@extends('Layouts.admin')
+@extends('layouts.admin')
 
 @section('title', 'Kelola Ulasan | Bakeryku')
 

@@ -1,5 +1,5 @@
 {{-- resources/views/Admin/Activity/index.blade.php --}}
-@extends('Layouts.admin')
+@extends('layouts.admin')
 
 @section('title', 'Riwayat Aktivitas | Ananda Bakery')
 

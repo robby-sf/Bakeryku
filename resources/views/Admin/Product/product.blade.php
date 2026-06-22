@@ -1,5 +1,5 @@
 {{-- resources/views/Admin/Menu/menu_list.blade.php --}}
-@extends('Layouts.admin')
+@extends('layouts.admin')
 
 @section('title', 'Daftar Menu | Bakeryku')
 
