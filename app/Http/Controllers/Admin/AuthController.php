@@ -19,7 +19,7 @@ class AuthController extends Controller
             return redirect()->route('admin.dashboard');
         }
 
-        return view('Admin.auth.login');
+        return view('admin.auth.login');
     }
 
     /**
@@ -85,7 +85,7 @@ class AuthController extends Controller
      */
     public function showRegister()
     {
-        return view('Admin.auth.register');
+        return view('admin.auth.register');
     }
 
     /**

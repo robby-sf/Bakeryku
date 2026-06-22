@@ -16,7 +16,7 @@ class ProfileController extends Controller
     public function show()
     {
         $user = Auth::guard('admin')->user();
-        return view('Admin.Profiles.profiles', compact('user'));
+        return view('admin.profiles.profiles', compact('user'));
     }
 
     /**

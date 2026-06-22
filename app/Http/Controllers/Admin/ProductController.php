@@ -14,7 +14,7 @@ class ProductController extends Controller
     public function index()
     {
         $products = Product::paginate(10);
-        return view('Admin.Product.product', compact('products'));
+        return view('admin.product.product', compact('products'));
     }
 
     /**
@@ -22,7 +22,7 @@ class ProductController extends Controller
      */
     public function create()
     {
-        return view('Admin.Product.tambah_menu');
+        return view('admin.product.tambah_menu');
     }
 
     /**
@@ -68,7 +68,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        return view('Admin.Product.show', compact('product'));
+        return view('admin.product.show', compact('product'));
     }
 
     /**
@@ -76,7 +76,7 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
-        return view('Admin.Product.edit', compact('product'));
+        return view('admin.product.edit', compact('product'));
     }
 
     /**

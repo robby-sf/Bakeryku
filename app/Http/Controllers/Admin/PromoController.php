@@ -26,12 +26,12 @@ class PromoController extends Controller
 
         $promos = $query->paginate(10)->withQueryString();
 
-        return view('Admin.Promo.promos', compact('promos', 'status'));
+        return view('admin.promo.promos', compact('promos', 'status'));
     }
 
     public function create()
     {
-        return view('Admin.Promo.add_promos');
+        return view('admin.promo.add_promos');
     }
 
     public function store(Request $request)
@@ -49,7 +49,7 @@ class PromoController extends Controller
 
     public function edit(Promo $promo)
     {
-        return view('Admin.Promo.add_promos', compact('promo'));
+        return view('admin.promo.add_promos', compact('promo'));
     }
 
     public function update(Request $request, Promo $promo)

@@ -90,7 +90,7 @@ Route::get('/menu', function () {
         'chocolate' => ['Chocolate'],
         'assorted' => ['Assorted'],
     ];
-    return view('Menu.menu_list', compact('products', 'categories', 'categoryMap'));
+    return view('menu.menu_list', compact('products', 'categories', 'categoryMap'));
 })->name('menu');
 Route::get('/stores', function () {
     try {
@@ -102,7 +102,7 @@ Route::get('/stores', function () {
     } catch (\Throwable $e) {
         $products = collect();
     }
-    return view('Store.store', compact('products'));
+    return view('store.store', compact('products'));
 })->name('store');
 Route::get('/promo', function () {
     try {
@@ -114,7 +114,7 @@ Route::get('/promo', function () {
     $settings = Cache::get('app_settings', []);
     $waNumber = $settings['wa_number'] ?? '+62 856 0238 5989';
 
-    return view('Promo.promo', compact('promos', 'waNumber'));
+    return view('promo.promo', compact('promos', 'waNumber'));
 })->name('promo');
 Route::get('/menu/view/{product}', [\App\Http\Controllers\MenuController::class, 'show'])->name('menu_view');
 
@@ -203,7 +203,7 @@ Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function ()
         }
 
         $activities = $query->paginate(10)->withQueryString();
-        return view('Admin.Activities.activities', compact('activities', 'type'));
+        return view('admin.activities.activities', compact('activities', 'type'));
     })->name('activities');
 
     Route::get('/activities/export', function () {

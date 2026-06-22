@@ -22,6 +22,6 @@ class MenuController extends Controller
             $isFavorited = auth()->guard('user')->user()->favorites()->where('product_id', $product->id)->exists();
         }
 
-        return view('Menu.menu_view', compact('product', 'reviews', 'averageRating', 'reviewCount', 'isFavorited'));
+        return view('menu.menu_view', compact('product', 'reviews', 'averageRating', 'reviewCount', 'isFavorited'));
     }
 }

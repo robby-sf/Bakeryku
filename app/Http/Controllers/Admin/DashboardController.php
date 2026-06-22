@@ -39,7 +39,7 @@ class DashboardController extends Controller
         $popularProducts = $this->popularProducts();
         $recentActivities = $this->recentActivities();
 
-        return view('Admin.Dashboard.dashboard', compact(
+        return view('admin.dashboard.dashboard', compact(
             'totalProducts',
             'totalReviews',
             'averageRating',

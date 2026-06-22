@@ -16,7 +16,7 @@ class AuthController extends Controller
             return redirect()->route('landing_page');
         }
 
-        return view('Auth.login');
+        return view('auth.login');
     }
 
     public function login(Request $request)
@@ -51,7 +51,7 @@ class AuthController extends Controller
             return redirect()->route('landing_page');
         }
 
-        return view('Auth.register');
+        return view('auth.register');
     }
 
     public function register(Request $request)

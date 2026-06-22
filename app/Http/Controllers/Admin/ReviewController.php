@@ -30,7 +30,7 @@ class ReviewController extends Controller
             'hidden' => Review::hidden()->count(),
         ];
 
-        return view('Admin.Reviews.reviews', compact('reviews', 'status', 'counts'));
+        return view('admin.reviews.reviews', compact('reviews', 'status', 'counts'));
     }
 
     /**
@@ -40,7 +40,7 @@ class ReviewController extends Controller
     {
         $review->load(['user', 'product']);
 
-        return view('Admin.Reviews.show', compact('review'));
+        return view('admin.reviews.show', compact('review'));
     }
 
     /**

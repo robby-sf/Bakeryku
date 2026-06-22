@@ -20,7 +20,7 @@ class NotificationController extends Controller
         $unreadCount = $admin->unreadNotifications()->count();
         $totalCount = $admin->notifications()->count();
 
-        return view('Admin.Notifications.notifications', compact('notifications', 'unreadCount', 'totalCount'));
+        return view('admin.notifications.notifications', compact('notifications', 'unreadCount', 'totalCount'));
     }
 
     public function markAsRead(Notification $notification)

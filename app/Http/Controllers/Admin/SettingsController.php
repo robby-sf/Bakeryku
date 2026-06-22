@@ -27,7 +27,7 @@ class SettingsController extends Controller
         
         $settings = Cache::get('app_settings');
 
-        return view('Admin.Settings.settings', compact('settings'));
+        return view('admin.settings.settings', compact('settings'));
     }
 
     /**

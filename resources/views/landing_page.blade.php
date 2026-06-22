@@ -152,7 +152,7 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-                    @include('Promo._promo_cards', ['promos' => $promos, 'waNumber' => $waNumber])
+                    @include('promo._promo_cards', ['promos' => $promos, 'waNumber' => $waNumber])
                 </div>
 
                 <div class="mt-8 text-center md:hidden">
