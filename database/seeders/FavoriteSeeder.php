@@ -12,11 +12,15 @@ class FavoriteSeeder extends Seeder
     public function run(): void
     {
         $favorites = [
-            ['nadia@example.com', 'Butter Croissant', now()->subDays(19)],
-            ['nadia@example.com', 'Strawberry Shortcake', now()->subDays(14)],
-            ['raka@example.com', 'Chocolate Danish', now()->subDays(9)],
+            ['nadia@example.com', 'Roll Cake', now()->subDays(19)],
+            ['nadia@example.com', 'Roti Tawar Pandan', now()->subDays(14)],
+            ['nadia@example.com', 'Kue Mandarin', now()->subDays(8)],
+            ['raka@example.com', 'Roti Choco Boat', now()->subDays(9)],
             ['raka@example.com', 'Roti Abon', now()->subDays(4)],
-            ['sinta@example.com', 'Mini Donut Box', now()->subDays(1)],
+            ['raka@example.com', 'Chiffon Cake Big', now()->subDays(6)],
+            ['sinta@example.com', 'Donat Meses', now()->subDays(1)],
+            ['sinta@example.com', 'Roti Pisang Coklat', now()->subDays(5)],
+            ['sinta@example.com', 'Blueberry Cheese', now()->subDays(3)],
         ];
 
         foreach ($favorites as [$email, $productName, $createdAt]) {

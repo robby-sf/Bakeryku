@@ -20,6 +20,60 @@ class PageVisitSeeder extends Seeder
 
         $visitData = [];
 
+        // --- Landing Page visits ---
+        for ($i = 0; $i < 30; $i++) {
+            $daysAgo = rand(0, 21);
+            $visitData[] = [
+                'visitor_id' => 'visitor-landing-' . $i,
+                'user_id' => rand(0, 2) ? null : $users->random()->id,
+                'product_id' => null,
+                'path' => '/',
+                'route_name' => 'landing_page',
+                'created_at' => now()->subDays($daysAgo)->subHours(rand(0, 23))->subMinutes(rand(0, 59)),
+            ];
+        }
+
+        // --- Menu Page visits ---
+        for ($i = 0; $i < 20; $i++) {
+            $daysAgo = rand(0, 21);
+            $visitData[] = [
+                'visitor_id' => 'visitor-menu-' . $i,
+                'user_id' => rand(0, 1) ? $users->random()->id : null,
+                'product_id' => null,
+                'path' => '/menu',
+                'route_name' => 'menu',
+                'created_at' => now()->subDays($daysAgo)->subHours(rand(0, 23))->subMinutes(rand(0, 59)),
+            ];
+        }
+
+        // --- Store Page visits ---
+        for ($i = 0; $i < 10; $i++) {
+            $daysAgo = rand(0, 21);
+            $visitData[] = [
+                'visitor_id' => 'visitor-store-' . $i,
+                'user_id' => rand(0, 1) ? $users->random()->id : null,
+                'product_id' => null,
+                'path' => '/stores',
+                'route_name' => 'store',
+                'created_at' => now()->subDays($daysAgo)->subHours(rand(0, 23))->subMinutes(rand(0, 59)),
+            ];
+        }
+
+        // --- Promo Page visits ---
+        for ($i = 0; $i < 8; $i++) {
+            $daysAgo = rand(0, 14);
+            $visitData[] = [
+                'visitor_id' => 'visitor-promo-' . $i,
+                'user_id' => rand(0, 1) ? $users->random()->id : null,
+                'product_id' => null,
+                'path' => '/promo',
+                'route_name' => 'promo',
+                'created_at' => now()->subDays($daysAgo)->subHours(rand(0, 23))->subMinutes(rand(0, 59)),
+            ];
+        }
+
+        // --- Product View visits ---
+
         // Week 3 ago: subDays 15 to 21 -> ~18 visits
         for ($i = 0; $i < 18; $i++) {
             $daysAgo = rand(15, 21);
@@ -62,8 +116,8 @@ class PageVisitSeeder extends Seeder
             ];
         }
 
-        // This week: 0 days ago (or today) -> ~12 visits
-        for ($i = 0; $i < 12; $i++) {
+        // This week: 0 days ago (today) -> ~15 visits
+        for ($i = 0; $i < 15; $i++) {
             $product = $products->random();
             $visitData[] = [
                 'visitor_id' => 'visitor-w0-' . $i,
